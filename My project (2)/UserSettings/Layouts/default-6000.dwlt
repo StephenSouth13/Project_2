@@ -489,7 +489,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 78.66667
+    y: 24
     width: 884.3333
     height: 493.3333
   m_SerializedDataModeController:
@@ -1048,7 +1048,7 @@ MonoBehaviour:
   m_Position:
     m_Target: {x: -20.81903, y: 11.983259, z: -0.10322207}
     speed: 2
-    m_Value: {x: -13.288264, y: 8.948404, z: -0.05634324}
+    m_Value: {x: -20.81903, y: 11.983259, z: -0.10322207}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1100,7 +1100,7 @@ MonoBehaviour:
   m_Size:
     m_Target: 20.322216
     speed: 2
-    m_Value: 15.634334
+    m_Value: 20.322216
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -1256,8 +1256,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Hierarchy\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 885.3334
-    y: 78.66667
+    x: 886.3333
+    y: 24
     width: 351.3333
     height: 493.3333
   m_SerializedDataModeController:
@@ -1322,8 +1322,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Inspector\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1238.6667
-    y: 78.66667
+    x: 1239.6666
+    y: 24
     width: 264.33337
     height: 493.3333
   m_SerializedDataModeController:
@@ -1464,7 +1464,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 598
+    y: 543.3333
     width: 1504
     height: 310.6667
   m_SerializedDataModeController:
@@ -1544,7 +1544,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 22660000
     m_LastClickedID: 26146
-    m_ExpandedIDs: 000000002266000000ca9a3b
+    m_ExpandedIDs: 0000000022660000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
