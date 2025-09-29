@@ -117,11 +117,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 1536
-        height: 1024
+        y: 814
+        width: 159
+        height: 72
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -134,11 +134,121 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: BackGround (2)_1
+      rect:
+        serializedVersion: 2
+        x: 116
+        y: 615
+        width: 362
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e50f7f3eb7f3ca4ca9a40469d5320c4
+      internalID: -1675657282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BackGround (2)_2
+      rect:
+        serializedVersion: 2
+        x: 758
+        y: 439
+        width: 488
+        height: 141
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 36f850b51bb168d4ab3c2b210d33a466
+      internalID: 1314094308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BackGround (2)_3
+      rect:
+        serializedVersion: 2
+        x: 979
+        y: 821
+        width: 344
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab7c94edacf8e4f45abc091b6681c3ae
+      internalID: -1996615105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BackGround (2)_4
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 236
+        width: 198
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7bbda0395ddd4de438e5f41a2083bdda
+      internalID: 1849879235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BackGround (2)_5
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 0
+        width: 1535
+        height: 1022
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 778cb406389603641bd416acf74fede4
+      internalID: -1173399302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 345b102b54557e64895f021009e2dbf4
     internalID: 0
     vertices: []
     indices: 
@@ -149,6 +259,11 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       BackGround (2)_0: 6631693218525734483
+      BackGround (2)_1: -1675657282
+      BackGround (2)_2: 1314094308
+      BackGround (2)_3: -1996615105
+      BackGround (2)_4: 1849879235
+      BackGround (2)_5: -1173399302
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
