@@ -109,44 +109,42 @@ public class PlayerController : MonoBehaviour
         // =========================================================
         if (isGrounded)
         {
-            // Nếu đối thủ ở bên PHẢI (opponentX > playerX)
-            if (opponentX > playerX)
-            {
-                // Player cần quay mặt sang PHẢI (Scale X phải là dương)
-                // Lần này chúng ta kiểm tra, nếu vẫn sai thì đảo dấu ở đây:
-                transform.localScale = new Vector3(
-                    -currentAbsScaleX, // Dùng GIÁ TRỊ DƯƠNG (quay mặt phải)
-                    transform.localScale.y,
-                    transform.localScale.z
-                );
-            }
-            // Nếu đối thủ ở bên TRÁI (opponentX < playerX)
-            else if (opponentX < playerX)
-            {
-                // Player cần quay mặt sang TRÁI (Scale X phải là âm)
-                // Nếu vẫn sai, đảo dấu ở đây:
-                transform.localScale = new Vector3(
-                    currentAbsScaleX, // Dùng GIÁ TRỊ ÂM (quay mặt trái)
-                    transform.localScale.y,
-                    transform.localScale.z
-                );
-            }
+            float targetScaleX = (opponentX > playerX) ? -currentAbsScaleX : currentAbsScaleX;
+            transform.localScale = new Vector3(
+                targetScaleX,
+                transform.localScale.y,
+                transform.localScale.z
+            );
         }
         // =========================================================
         // B. Xử lý khi TRÊN KHÔNG (Giữ nguyên logic cũ)
         // =========================================================
         else if (!isGrounded && canFlipWhileAirborne)
         {
-            // Logic này đang hoạt động đúng với input người chơi, giữ nguyên
-            float targetDirection = horizontalInput;
-            if (Mathf.Abs(targetDirection) > 0.01f)
+            float direction = horizontalInput;
+
+
+            if (Mathf.Abs(direction) > 0.01f)
             {
+                float targetScaleX = Mathf.Sign(direction) * currentAbsScaleX;
+
+                if (direction > 0)
+                {
+                    targetScaleX = -currentAbsScaleX; // Quay Phải (Scale Âm)
+                }
+                else if (direction < 0)
+                {
+                    targetScaleX = currentAbsScaleX; // Quay Trái (Scale Dương)
+                }
+
                 transform.localScale = new Vector3(
-                    targetDirection * currentAbsScaleX,
+                    targetScaleX,
                     transform.localScale.y,
                     transform.localScale.z
                 );
             }
         }
     }
+
+    
 }
