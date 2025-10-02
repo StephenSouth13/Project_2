@@ -136,8 +136,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a27ca10e3f7bcc4c9f5849298670309, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runSpeed: 7.5
-  jumpForce: 7
+  runSpeed: 8
+  jumpForce: 12
   maxJumps: 2
   opponentTransform: {fileID: 314330150}
   canFlipWhileAirborne: 1
@@ -161,7 +161,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 4
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
