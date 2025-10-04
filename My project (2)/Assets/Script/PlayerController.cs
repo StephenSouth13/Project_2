@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     public float runSpeed = 7.5f;     // Tốc độ
     public float jumpForce = 7f;     // Lực nhảy
     public int maxJumps = 2;          // Số lần nhảy tối đa (Nhảy Đôi)
+    public bool isJump;
 
     [Header("Combat Interaction")]
     public Transform opponentTransform; // Tham chiếu đến đối tượng Đối thủ (Enemy)
@@ -22,7 +23,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private bool isGrounded;
     private float horizontalInput;
-    private int jumpsRemaining; // Số lần nhảy còn lại
+    public int jumpsRemaining; // Số lần nhảy còn lại
 
     // Khởi tạo
     void Start()
@@ -42,10 +43,11 @@ public class PlayerController : MonoBehaviour
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
 
         // Reset số lần nhảy khi chạm đất
-        if (isGrounded)
+        if (isGrounded && !isJump)
         {
-            jumpsRemaining = maxJumps;
+            jumpsRemaining = maxJumps; isJump = true;
         }
+
 
         // 2. DI CHUYỂN NGANG
         MoveHorizontal();
@@ -80,7 +82,7 @@ public class PlayerController : MonoBehaviour
     private void Jump()
     {
         // Chỉ cho phép nhảy khi còn lượt nhảy
-        if (jumpsRemaining > 0)
+        if (jumpsRemaining > 0 && isJump)
         {
             // Đặt vận tốc Y về 0 để lực nhảy nhất quán (tránh nhảy thêm lực từ lần rơi trước)
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
@@ -88,6 +90,11 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
             jumpsRemaining--; // Giảm số lần nhảy
+
+        }
+        else
+        {
+            isJump = false;
         }
     }
 
