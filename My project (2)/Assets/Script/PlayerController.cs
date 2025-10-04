@@ -91,60 +91,121 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //private void FlipSprite()
+    //{
+    //    Đảm bảo có đối thủ để tránh lỗi
+    //    if (opponentTransform == null)
+    //    {
+    //        // Giữ nguyên hướng mặt nếu không có đối thủ
+    //        return;
+    //    }
+
+    //    float playerX = transform.position.x;
+    //    float opponentX = opponentTransform.position.x;
+    //    float currentAbsScaleX = Mathf.Abs(transform.localScale.x); // Lấy giá trị tuyệt đối của Scale X
+
+    //    // =========================================================
+    //    // A. Xử lý khi ĐANG CHẠM ĐẤT (Khóa hướng về phía đối thủ)
+    //    // =========================================================
+    //    if (isGrounded)
+    //    {
+    //        float targetScaleX = (opponentX > playerX) ? -currentAbsScaleX : currentAbsScaleX;
+    //        transform.localScale = new Vector3(
+    //            targetScaleX,
+    //            transform.localScale.y,
+    //            transform.localScale.z
+    //        );
+    //    }
+    //    // =========================================================
+    //    // B. Xử lý khi TRÊN KHÔNG (Giữ nguyên logic cũ)
+    //    // =========================================================
+    //    else if (!isGrounded && canFlipWhileAirborne)
+    //    {
+    //        float direction = horizontalInput;
+
+
+    //        if (Mathf.Abs(direction) > 0.01f)
+    //        {
+    //            float targetScaleX = Mathf.Sign(direction) * currentAbsScaleX;
+
+    //            if (direction > 0)
+    //            {
+    //                targetScaleX = -currentAbsScaleX; // Quay Phải (Scale Âm)
+    //            }
+    //            else if (direction < 0)
+    //            {
+    //                targetScaleX = currentAbsScaleX; // Quay Trái (Scale Dương)
+    //            }
+
+    //            transform.localScale = new Vector3(
+    //                targetScaleX,
+    //                transform.localScale.y,
+    //                transform.localScale.z
+    //            );
+    //        }
+    //    }
+    //}
     private void FlipSprite()
     {
-        // Đảm bảo có đối thủ để tránh lỗi
+        // Đảm bảo có đối thủ để tránh lỗi (Giữ nguyên kiểm tra này nếu bạn cần dùng opponentTransform cho các logic khác sau này)
+        // Tuy nhiên, đối với việc quay mặt theo hướng chạy, bạn không cần opponentTransform.
+        /*
         if (opponentTransform == null)
         {
             // Giữ nguyên hướng mặt nếu không có đối thủ
             return;
         }
+        */
 
-        float playerX = transform.position.x;
-        float opponentX = opponentTransform.position.x;
-        float currentAbsScaleX = Mathf.Abs(transform.localScale.x); // Lấy giá trị tuyệt đối của Scale X
+        // Lấy giá trị tuyệt đối của Scale X
+        float currentAbsScaleX = Mathf.Abs(transform.localScale.x);
+        float direction = horizontalInput;
 
-        // =========================================================
-        // A. Xử lý khi ĐANG CHẠM ĐẤT (Khóa hướng về phía đối thủ)
-        // =========================================================
-        if (isGrounded)
+        // ---------------------------------------------------------
+        // LOGIC XOAY CHIỀU MỚI: Ưu tiên hướng di chuyển ngang (horizontalInput)
+        // ---------------------------------------------------------
+
+        // Chỉ xoay khi có input di chuyển (tránh lỗi khi nhân vật đứng yên)
+        if (Mathf.Abs(direction) > 0.01f)
         {
-            float targetScaleX = (opponentX > playerX) ? -currentAbsScaleX : currentAbsScaleX;
+            float targetScaleX = transform.localScale.x;
+
+            if (direction > 0) // Di chuyển sang PHẢI
+            {
+                // Quay Phải (Scale Âm, vì bạn đã định nghĩa 'Quay Phải' là -currentAbsScaleX)
+                targetScaleX = -currentAbsScaleX;
+            }
+            else if (direction < 0) // Di chuyển sang TRÁI
+            {
+                // Quay Trái (Scale Dương)
+                targetScaleX = currentAbsScaleX;
+            }
+
+            // Áp dụng Scale X mới
             transform.localScale = new Vector3(
                 targetScaleX,
                 transform.localScale.y,
                 transform.localScale.z
             );
         }
-        // =========================================================
-        // B. Xử lý khi TRÊN KHÔNG (Giữ nguyên logic cũ)
-        // =========================================================
-        else if (!isGrounded && canFlipWhileAirborne)
+        // ---------------------------------------------------------
+        // Lựa chọn (Tùy chọn): Nếu đứng yên, quay mặt về phía đối thủ.
+        // Nếu bạn muốn nhân vật đứng yên nhưng vẫn đối mặt với kẻ địch,
+        // hãy sử dụng đoạn logic dưới đây. Nếu không, hãy bỏ qua.
+        // ---------------------------------------------------------
+        else if (opponentTransform != null) // Nếu không có input di chuyển, quay mặt về phía đối thủ
         {
-            float direction = horizontalInput;
+            float playerX = transform.position.x;
+            float opponentX = opponentTransform.position.x;
+            float targetScaleX = (opponentX > playerX) ? -currentAbsScaleX : currentAbsScaleX;
 
-
-            if (Mathf.Abs(direction) > 0.01f)
-            {
-                float targetScaleX = Mathf.Sign(direction) * currentAbsScaleX;
-
-                if (direction > 0)
-                {
-                    targetScaleX = -currentAbsScaleX; // Quay Phải (Scale Âm)
-                }
-                else if (direction < 0)
-                {
-                    targetScaleX = currentAbsScaleX; // Quay Trái (Scale Dương)
-                }
-
-                transform.localScale = new Vector3(
-                    targetScaleX,
-                    transform.localScale.y,
-                    transform.localScale.z
-                );
-            }
+            transform.localScale = new Vector3(
+                targetScaleX,
+                transform.localScale.y,
+                transform.localScale.z
+            );
         }
     }
 
-    
+
 }
