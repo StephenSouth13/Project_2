@@ -2,6 +2,9 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
+*.dwlt
+*.log
+
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
@@ -59,11 +62,6 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
-/My project (2)/UserSettings/Layouts
-/My project (2)/UserSettings
-My project (2)/Assets/Scenes/Home.unity
-My project (2)/Assets/Scenes/Home.unity
-My project (2)/UserSettings/Layouts/default-6000.dwlt
 /My project (2)/UserSettings/Layouts
 /My project (2)/UserSettings
 My project (2)/UserSettings/Layouts/default-6000.dwlt
