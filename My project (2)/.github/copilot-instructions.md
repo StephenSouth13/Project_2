@@ -2,9 +2,8 @@
 - Project name: My project (2)
 - Unity version: Unity 6000.0.55f1
 - Active scene:
-  - Name: Battle_Offline_Test
   - Tags:
-    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController
+    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Bullet
   - Layers:
     - Default, TransparentFX, Ignore Raycast, Water, UI, Ground
 - Active game object:
