@@ -39,6 +39,8 @@ MonoBehaviour:
   - DestroySpaceship
   - Fire
   - RespawnSpaceship
+  - Flip
+  - SetMoveAnim
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

@@ -2,6 +2,7 @@ using Photon.Pun;
 using UnityEngine;
 using Photon.Realtime;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class PhotonRoomManager : MonoBehaviourPunCallbacks
 {
@@ -45,6 +46,7 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
         }
         Debug.LogWarning("⚠️ [joinRoom] Không có phòng trống. Tạo phòng mới.");
         createRoom();
+        EventSystem.current.SetSelectedGameObject(null); // Bỏ chọn button sau khi nhấn
 
     }
     public void leaveRoom() // Hàm sẽ được sử dụng cho button "Leave Room" // Rời phòng hiện tại
@@ -58,6 +60,7 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
         {
             Debug.LogWarning("⚠️ [leaveRoom] Không thể rời phòng vì không ở trong phòng nào.");
         }
+        EventSystem.current.SetSelectedGameObject(null); // Bỏ chọn button sau khi nhấn
     }
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
