@@ -5,7 +5,7 @@
   - Tags:
     - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController
   - Layers:
-    - Default, TransparentFX, Ignore Raycast, Water, UI, Ground
+    - Default, TransparentFX, Ignore Raycast, Water, UI
 - Active game object:
   - Name: Player_D
   - Tag: Untagged
