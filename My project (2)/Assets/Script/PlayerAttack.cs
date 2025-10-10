@@ -5,9 +5,11 @@ public class PlayerAttack : MonoBehaviourPun // Kế thừa MonoBehaviourPun
 {
     [Header("Attack Settings")]
     public int damage = 20;
-    public Transform attackPoint;
-    public float attackRange = 0.5f;
-    public LayerMask enemyLayers;
+    
+
+    [Header("HitBox Collider")]
+    public Collider2D swordHitBoxCollider; // Kéo và thả Box Collider 2D vào đây
+    private bool hasHit = false;
 
     [Header("Cooldown")]
     public float attackRate = 2f;
@@ -60,35 +62,49 @@ public class PlayerAttack : MonoBehaviourPun // Kế thừa MonoBehaviourPun
 
     public void DealDamage() // Tên hàm này phải khớp với Animation Event
     {
-        // 3. TÌM KẺ ĐỊCH TRONG HITBOX
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+        if (!photonView.IsMine) return;
 
-        foreach (Collider2D enemy in hitEnemies)
+        if (swordHitBoxCollider != null)
         {
-            // Lấy PhotonView của đối thủ
-            PhotonView enemyPV = enemy.GetComponent<PhotonView>();
-
-            if (enemyPV != null)
-            {
-                // 4. GỌI RPC TAKE_DAMAGE ĐỂ ĐỒNG BỘ SÁT THƯƠNG
-                // Giả sử script nhận sát thương (Health/Combat script của đối thủ)
-                // cũng có component PhotonView.
-                enemyPV.RPC("TakeDamage", RpcTarget.All, damage);
-                Debug.Log($"Hit {enemy.gameObject.name} and called TakeDamage RPC.");
-            }
+            swordHitBoxCollider.enabled = true; // BẬT HitBox (Trigger)
+            hasHit = false; // Reset cờ hit
+            Debug.Log("HitBox Activated.");
         }
     }
 
-    void OnDrawGizmosSelected()
+    
+
+    public void DisableHitBox() // Gọi từ Animation Event (End Swing)
     {
-        if (attackPoint == null) return;
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        if (swordHitBoxCollider != null)
+        {
+            swordHitBoxCollider.enabled = false; // TẮT HitBox
+            Debug.Log("HitBox Deactivated.");
+        }
     }
 
-    public void DisableHitBox()
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        // Logic tắt HitBox sẽ được thêm sau, bây giờ chỉ để nó trống
-        Debug.Log("HitBox Disabled.");
+        if (other == swordHitBoxCollider || swordHitBoxCollider.enabled == false) return;
+        // Chỉ xử lý va chạm của HitBox mà bạn vừa bật
+        if (other.CompareTag("Enemy") || other.GetComponent<Health>() != null)
+        {
+            if (hasHit) return;
+            // Lấy PhotonView của đối thủ (Kiểm tra lại Enemy Layers)
+            PhotonView enemyPV = other.GetComponent<PhotonView>();
+
+            if (enemyPV != null)
+            {
+                // GỌI RPC TAKE_DAMAGE ĐỂ ĐỒNG BỘ SÁT THƯƠNG
+                enemyPV.RPC("TakeDamage", RpcTarget.All, damage);
+                Debug.Log($"Hit {other.gameObject.name} via Collider Trigger.");
+
+                // Đánh dấu đã hit để tránh gây sát thương lặp lại
+                hasHit = true;
+
+                // Tắt HitBox ngay sau khi đánh trúng (để chỉ đánh 1 lần/lượt vung)
+                DisableHitBox();
+            }
+        }
     }
 }
