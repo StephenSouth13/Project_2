@@ -85,8 +85,8 @@ public class WeaponSpawner : MonoBehaviour
         var cam = Camera.main;
         if (cam != null)
         {
-            var shaker = cam.GetComponent<CameraShake>();
-            if (shaker != null) shaker.Shake(shakeDuration, shakeMagnitude);
+            // var shaker = cam.GetComponent<CameraShake>();
+            // if (shaker != null) shaker.Shake(shakeDuration, shakeMagnitude);
         }
     }
 
