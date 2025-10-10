@@ -3254,15 +3254,49 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &2110385803
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2110385799}
+  m_CullTransparentMesh: 1
+--- !u!114 &2110385804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2110385799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11744ec84876e7f4486dcbd42e527279, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerPrefab: {fileID: 4481641082274773960, guid: 951bf2798a52c09489ee6385532bf457, type: 3}
+  spawnPoints:
+  - {fileID: 71453937}
+  - {fileID: 1830986013}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1874676658}
-  - {fileID: 373997953}
-  - {fileID: 261772791}
-  - {fileID: 1270371462}
-  - {fileID: 213429062}
-  - {fileID: 1556520572}
-  - {fileID: 2033215396}
-  - {fileID: 1689813374}
+  - {fileID: 253596491}
+  - {fileID: 1727848070}
+  - {fileID: 594744135}
+  - {fileID: 2001982771}
+  - {fileID: 130331944}
+  - {fileID: 1409085940}
+  - {fileID: 71453937}
+  - {fileID: 1830986013}
