@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Photon.Pun;
 
 public class PlayerController : MonoBehaviour
 {
@@ -24,14 +25,17 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private float horizontalInput;
     public int jumpsRemaining; // Số lần nhảy còn lại
-
+    private PhotonView photonView;
+    private Animator anim;
     // Khởi tạo
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        if (rb == null)
+        photonView = GetComponent<PhotonView>();
+        anim = GetComponentInChildren<Animator>();
+        if (anim == null)
         {
-            Debug.LogError("Rigidbody2D not found! Please attach it to the Player GameObject.");
+            Debug.LogError("Animator not found! Check if it's on UniRoot."); 
         }
         jumpsRemaining = maxJumps; // Khởi tạo số lần nhảy
     }
@@ -51,32 +55,42 @@ public class PlayerController : MonoBehaviour
 
         // 2. DI CHUYỂN NGANG
         MoveHorizontal();
+        
     }
 
     // Cập nhật Input (Update)
     void Update()
     {
+   
+        if (photonView.IsMine)
+        {
+            HandleInput();
+            UpdateAnimations();
+        }
+        else
+        {
+            
+            // Hiện tại không làm gì, chỉ cho phép PhotonView Component tự đồng bộ.
+        }
+    }
+    private void HandleInput()
+    {
         horizontalInput = Input.GetAxisRaw("Horizontal");
-
+        //Debug.Log("Horizontal Input: " + horizontalInput); 
         // 3. NHẢY (Bây giờ đã hỗ trợ Nhảy Đôi)
         if (Input.GetButtonDown("Jump"))
         {
             Jump();
         }
 
-        // 4. XOAY CHIỀU SPRITE (Đã sửa lỗi)
+        // 4. XOAY CHIỀU SPRITE 
         FlipSprite();
     }
 
-    // =========================================================
-    // HÀM XỬ LÝ CHUYỂN ĐỘNG
-    // =========================================================
 
     private void MoveHorizontal()
     {
-        // **Đã sửa lỗi:** Sử dụng rb.velocity thay vì rb.linearVelocity
-        Vector2 movement = new Vector2(horizontalInput * runSpeed, rb.linearVelocity.y);
-        rb.linearVelocity = movement;
+        rb.linearVelocity = new Vector2(horizontalInput * runSpeed, rb.linearVelocity.y);
     }
 
     private void Jump()
@@ -112,12 +126,10 @@ public class PlayerController : MonoBehaviour
 
             if (direction > 0) // Di chuyển sang PHẢI
             {
-                // Quay Phải (Scale Âm, vì bạn đã định nghĩa 'Quay Phải' là -currentAbsScaleX)
                 targetScaleX = -currentAbsScaleX;
             }
             else if (direction < 0) // Di chuyển sang TRÁI
             {
-                // Quay Trái (Scale Dương)
                 targetScaleX = currentAbsScaleX;
             }
 
@@ -141,5 +153,16 @@ public class PlayerController : MonoBehaviour
                 transform.localScale.z
             );
         }
+    }
+
+    private void UpdateAnimations()
+    {
+        if (anim == null) return;
+
+        // 1. Run/Idle
+        bool IsMoving = Mathf.Abs(horizontalInput) > 0.01f; 
+        anim.SetBool("isMoving", IsMoving); 
+
+        
     }
 }
