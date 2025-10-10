@@ -90,7 +90,7 @@ public class PlayerController : MonoBehaviour
 
     private void MoveHorizontal()
     {
-        rb.velocity = new Vector2(horizontalInput * runSpeed, rb.velocity.y);
+        rb.linearVelocity = new Vector2(horizontalInput * runSpeed, rb.linearVelocity.y);
     }
 
     private void Jump()
@@ -99,7 +99,7 @@ public class PlayerController : MonoBehaviour
         if (jumpsRemaining > 0 && isJump)
         {
             // Đặt vận tốc Y về 0 để lực nhảy nhất quán (tránh nhảy thêm lực từ lần rơi trước)
-            rb.velocity = new Vector2(rb.velocity.x, 0f);
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
 
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
