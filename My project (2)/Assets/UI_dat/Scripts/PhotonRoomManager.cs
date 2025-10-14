@@ -108,6 +108,7 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
         Debug.Log("✅ [OnJoinedRoom] Đã vào phòng: " + PhotonNetwork.CurrentRoom.Name);
         if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
         {
+        
             Debug.Log("✅ [OnJoinedRoom] Phòng đầy. Bắt đầu trò chơi!");
             // logic Bắt đầu trò chơi
             PhotonNetwork.CurrentRoom.IsOpen = false; // Đóng phòng để không ai khác có thể tham gia
@@ -116,6 +117,10 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
         {
             Debug.Log("⏳ [OnJoinedRoom] Đang chờ người chơi khác...");
         }
+    }
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        
     }
     public override void OnJoinRoomFailed(short returnCode, string message)
     {

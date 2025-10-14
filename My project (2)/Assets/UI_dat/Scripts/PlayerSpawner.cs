@@ -25,6 +25,7 @@ public class PlayerSpawner : MonoBehaviourPun
                 Debug.Log("[SpawnPLayer] Player spawned with name: " + player.name);
 
                 EventSystem.current.SetSelectedGameObject(null); // Bỏ chọn button sau khi nhấn
+
             }
         }
         else

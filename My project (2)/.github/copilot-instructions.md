@@ -2,13 +2,13 @@
 - Project name: My project (2)
 - Unity version: Unity 6000.0.55f1
 - Active scene:
-  - Name: Battle_Offline_Test
+  - Name: Battle_Fight
   - Tags:
-    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController
+    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Enemy
   - Layers:
-    - Default, TransparentFX, Ignore Raycast, Water, UI, Ground
+    - Default, TransparentFX, Ignore Raycast, Water, UI, Enemy, Ground
 - Active game object:
-  - Name: BackGround (2)_0
-  - Tag: Untagged
+  - Name: Main Camera (1)
+  - Tag: MainCamera
   - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

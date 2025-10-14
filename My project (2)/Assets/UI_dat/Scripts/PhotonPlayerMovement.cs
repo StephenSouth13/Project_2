@@ -75,7 +75,10 @@ public class PhotonPlayerMovement : MonoBehaviourPun
         Vector2 movement = new Vector2(horizontalInput * runSpeed, rb.linearVelocity.y);
         rb.linearVelocity = movement;
         bool isMoving = horizontalInput > 0.05f || horizontalInput < -0.05f;
-        photonView.RPC("SetMoveAnim", RpcTarget.Others, isMoving); // Gọi RPC để đồng bộ animation cho các client khác
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC("SetMoveAnim", RpcTarget.Others, isMoving); // Gọi RPC để đồng bộ animation cho các client khác
+        }
         anim.SetBool("1_Move", isMoving); // local animation
         FlipSprite();
     }
@@ -113,7 +116,7 @@ public class PhotonPlayerMovement : MonoBehaviourPun
                 defaultFace = true;
                 // Quay Phải (Scale Âm, vì bạn đã định nghĩa 'Quay Phải' là -currentAbsScaleX)
                 targetScaleX = -currentAbsScaleX;
-
+                
                 photonView.RPC("Flip", RpcTarget.Others, defaultFace); // Gọi RPC để lật sprite cho các client khác
             }
             else if (direction < 0) // Di chuyển sang TRÁI
