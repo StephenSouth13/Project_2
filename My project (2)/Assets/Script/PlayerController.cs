@@ -161,7 +161,7 @@ public class PlayerController : MonoBehaviour
 
         // 1. Run/Idle
         bool IsMoving = Mathf.Abs(horizontalInput) > 0.01f; 
-        anim.SetBool("isMoving", IsMoving); 
+        anim.SetBool("1_Move", IsMoving); 
 
         
     }
