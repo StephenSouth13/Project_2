@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     public float runSpeed = 7.5f;     // Tốc độ
     public float jumpForce = 7f;     // Lực nhảy
     public int maxJumps = 2;          // Số lần nhảy tối đa (Nhảy Đôi)
+    public bool isJump;
 
     [Header("Combat Interaction")]
     public Transform opponentTransform; // Tham chiếu đến đối tượng Đối thủ (Enemy)
@@ -22,7 +23,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private bool isGrounded;
     private float horizontalInput;
-    private int jumpsRemaining; // Số lần nhảy còn lại
+    public int jumpsRemaining; // Số lần nhảy còn lại
 
     // Khởi tạo
     void Start()
@@ -42,10 +43,11 @@ public class PlayerController : MonoBehaviour
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
 
         // Reset số lần nhảy khi chạm đất
-        if (isGrounded)
+        if (isGrounded && !isJump)
         {
-            jumpsRemaining = maxJumps;
+            jumpsRemaining = maxJumps; isJump = true;
         }
+
 
         // 2. DI CHUYỂN NGANG
         MoveHorizontal();
@@ -80,7 +82,7 @@ public class PlayerController : MonoBehaviour
     private void Jump()
     {
         // Chỉ cho phép nhảy khi còn lượt nhảy
-        if (jumpsRemaining > 0)
+        if (jumpsRemaining > 0 && isJump)
         {
             // Đặt vận tốc Y về 0 để lực nhảy nhất quán (tránh nhảy thêm lực từ lần rơi trước)
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
@@ -88,63 +90,56 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
             jumpsRemaining--; // Giảm số lần nhảy
+
+        }
+        else
+        {
+            isJump = false;
         }
     }
 
+    
     private void FlipSprite()
     {
-        // Đảm bảo có đối thủ để tránh lỗi
-        if (opponentTransform == null)
-        {
-            // Giữ nguyên hướng mặt nếu không có đối thủ
-            return;
-        }
+        
+        float currentAbsScaleX = Mathf.Abs(transform.localScale.x);
+        float direction = horizontalInput;
 
-        float playerX = transform.position.x;
-        float opponentX = opponentTransform.position.x;
-        float currentAbsScaleX = Mathf.Abs(transform.localScale.x); // Lấy giá trị tuyệt đối của Scale X
-
-        // =========================================================
-        // A. Xử lý khi ĐANG CHẠM ĐẤT (Khóa hướng về phía đối thủ)
-        // =========================================================
-        if (isGrounded)
+      
+        if (Mathf.Abs(direction) > 0.01f)
         {
-            float targetScaleX = (opponentX > playerX) ? -currentAbsScaleX : currentAbsScaleX;
+            float targetScaleX = transform.localScale.x;
+
+            if (direction > 0) // Di chuyển sang PHẢI
+            {
+                // Quay Phải (Scale Âm, vì bạn đã định nghĩa 'Quay Phải' là -currentAbsScaleX)
+                targetScaleX = -currentAbsScaleX;
+            }
+            else if (direction < 0) // Di chuyển sang TRÁI
+            {
+                // Quay Trái (Scale Dương)
+                targetScaleX = currentAbsScaleX;
+            }
+
+            // Áp dụng Scale X mới
             transform.localScale = new Vector3(
                 targetScaleX,
                 transform.localScale.y,
                 transform.localScale.z
             );
         }
-        // =========================================================
-        // B. Xử lý khi TRÊN KHÔNG (Giữ nguyên logic cũ)
-        // =========================================================
-        else if (!isGrounded && canFlipWhileAirborne)
+       
+        else if (opponentTransform != null) // Nếu không có input di chuyển, quay mặt về phía đối thủ
         {
-            float direction = horizontalInput;
+            float playerX = transform.position.x;
+            float opponentX = opponentTransform.position.x;
+            float targetScaleX = (opponentX > playerX) ? -currentAbsScaleX : currentAbsScaleX;
 
-
-            if (Mathf.Abs(direction) > 0.01f)
-            {
-                float targetScaleX = Mathf.Sign(direction) * currentAbsScaleX;
-
-                if (direction > 0)
-                {
-                    targetScaleX = -currentAbsScaleX; // Quay Phải (Scale Âm)
-                }
-                else if (direction < 0)
-                {
-                    targetScaleX = currentAbsScaleX; // Quay Trái (Scale Dương)
-                }
-
-                transform.localScale = new Vector3(
-                    targetScaleX,
-                    transform.localScale.y,
-                    transform.localScale.z
-                );
-            }
+            transform.localScale = new Vector3(
+                targetScaleX,
+                transform.localScale.y,
+                transform.localScale.z
+            );
         }
     }
-
-    
 }
