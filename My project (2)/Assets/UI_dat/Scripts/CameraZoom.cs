@@ -73,17 +73,21 @@ public class CameraZoom : MonoBehaviour
         foreach (GameObject player in players)
         {
             PhotonView pv = player.GetComponent<PhotonView>();
-            if(pv != null)
+            if (pv != null)
             {
                 if (pv.Owner.ActorNumber == 1)
                 {
                     player1 = player.transform;
                 }
-                else if(pv.Owner.ActorNumber == 2)
+                else if (pv.Owner.ActorNumber == 2)
                 {
                     player2 = player.transform;
                 }
             }
+        }
+        if(player1 != null && player2 != null)
+        {
+            CancelInvoke("AssignPlayers"); // Hủy việc gọi lại nếu đã gán được cả hai người chơi
         }
     }
     void TryAssignPlayers()
@@ -91,9 +95,6 @@ public class CameraZoom : MonoBehaviour
         if (player1 == null || player2 == null)
         {
             InvokeRepeating("AssignPlayers", 0f, 1f); // Thử gán lại mỗi giây
-        }else
-        {
-            CancelInvoke("AssignPlayers"); // Hủy việc gọi lại nếu đã gán thành công
         }
     }
 }

@@ -64,7 +64,7 @@ public class PhotonPlayerMovement : MonoBehaviourPun
         if (isGrounded && !isJump)
         {
             jumpsRemaining = maxJumps; isJump = true;
-            Debug.Log("Reset jumps to: " + jumpsRemaining);
+            // Debug.Log("Reset jumps to: " + jumpsRemaining);
         }
     }
 

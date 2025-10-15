@@ -8,7 +8,7 @@
   - Layers:
     - Default, TransparentFX, Ignore Raycast, Water, UI, Enemy, Ground
 - Active game object:
-  - Name: Main Camera (1)
-  - Tag: MainCamera
-  - Layer: Default
+  - Name: Slider (2)
+  - Tag: Untagged
+  - Layer: UI
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->
