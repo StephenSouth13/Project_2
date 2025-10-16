@@ -10,6 +10,12 @@ public class PlayerController : MonoBehaviour
     public int maxJumps = 2;          // Số lần nhảy tối đa (Nhảy Đôi)
     public bool isJump;
 
+    // Tham chiếu đến thành phần Audio Source trên nhân vật
+    public AudioSource audioSource;
+    // Các file âm thanh mà chúng ta sẽ gán trong Inspector
+    public AudioClip jumpSound;
+    
+
     [Header("Combat Interaction")]
     public Transform opponentTransform; // Tham chiếu đến đối tượng Đối thủ (Enemy)
     public bool canFlipWhileAirborne = true; // Biến bật/tắt logic xoay khi nhảy (Mặc định là BẬT)
@@ -38,6 +44,11 @@ public class PlayerController : MonoBehaviour
             Debug.LogError("Animator not found! Check if it's on UniRoot."); 
         }
         jumpsRemaining = maxJumps; // Khởi tạo số lần nhảy
+
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
     }
 
     // Cập nhật Vật lý (FixedUpdate)
@@ -69,14 +80,13 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            
-            // Hiện tại không làm gì, chỉ cho phép PhotonView Component tự đồng bộ.
+           
         }
     }
     private void HandleInput()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
-        //Debug.Log("Horizontal Input: " + horizontalInput); 
+        
         // 3. NHẢY (Bây giờ đã hỗ trợ Nhảy Đôi)
         if (Input.GetButtonDown("Jump"))
         {
@@ -104,7 +114,7 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
             jumpsRemaining--; // Giảm số lần nhảy
-
+            PlaySFX(jumpSound);
         }
         else
         {
@@ -162,7 +172,13 @@ public class PlayerController : MonoBehaviour
         // 1. Run/Idle
         bool IsMoving = Mathf.Abs(horizontalInput) > 0.01f; 
         anim.SetBool("1_Move", IsMoving); 
+    }
 
-        
+    void PlaySFX (AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
     }
 }
