@@ -2270,7 +2270,7 @@ Transform:
   m_GameObject: {fileID: 356550811}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.88, y: -1.42, z: 0.025341693}
+  m_LocalPosition: {x: 7.04, y: -1.42, z: 0.025341693}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2859,7 +2859,7 @@ Transform:
   m_GameObject: {fileID: 1036685111}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.04, y: -1.42, z: 0.025341693}
+  m_LocalPosition: {x: -7.04, y: -1.42, z: 0.025341693}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3085,7 +3085,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcacd55a6b6b9714bb5a1f6c83ecfcf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthBar: {fileID: 295300567}
+  healthBar1: {fileID: 295300567}
+  healthBar2: {fileID: 1499201906}
   character1: {fileID: 0}
   character2: {fileID: 0}
 --- !u!1 &1174697019
@@ -3715,8 +3716,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 4481641082274773960, guid: bb849a0657cdcf443ba93fc1a8ca52db, type: 3}
   spawnPoints:
-  - {fileID: 1036685112}
   - {fileID: 356550812}
+  - {fileID: 1036685112}
 --- !u!114 &1738106034
 MonoBehaviour:
   m_ObjectHideFlags: 0

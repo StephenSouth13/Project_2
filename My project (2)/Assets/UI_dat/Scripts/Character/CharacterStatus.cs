@@ -9,7 +9,10 @@ public class CharacterStatus
     public float defense = 5f;
     public float speed = 5f;
     [HideInInspector] public float currentHealth { get; private set; }
-
+    public void SetCurrentHealth(float value)
+    {
+        currentHealth = Mathf.Clamp(value, 0, health);
+    }
     public void Init()
     {
         currentHealth = health;

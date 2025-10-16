@@ -42,6 +42,12 @@ MonoBehaviour:
   - Flip
   - SetMoveAnim
   - TakeDamage
+  - SyncHealth
+  - PlayDebuff
+  - PlayMove
+  - PlayTrigerDamaged
+  - PlayTriggerAttack
+  - PlayTriggerDead
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

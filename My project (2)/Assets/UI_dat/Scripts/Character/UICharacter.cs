@@ -11,6 +11,7 @@ public class UICharacter : MonoBehaviour
     void Start()
     {
         healthBar1.value = 1f;
+        healthBar2.value = 1f;
     }
 
     // Update is called once per frame
@@ -49,5 +50,4 @@ public class UICharacter : MonoBehaviour
             UpdateHealthBar2(character2.status.currentHealth, character2.status.health); // Cập nhật thanh máu ngay lập tức
         }
     }
-
 }

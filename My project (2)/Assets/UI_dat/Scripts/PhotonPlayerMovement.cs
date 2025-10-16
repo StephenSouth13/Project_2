@@ -18,12 +18,17 @@ public class PhotonPlayerMovement : MonoBehaviourPun
     // Thành phần và Trạng thái
     [Header("Components")]
     public Rigidbody2D rb;
-    public Animator anim;
-
+    public AnimCharacter animCharacter;
     private bool isGrounded;
     private float horizontalInput;
     public int jumpsRemaining; // Số lần nhảy còn lại
 
+    void Awake()
+    {
+        // Lấy thành phần Rigidbody2D và Animator
+        rb = GetComponent<Rigidbody2D>();
+        animCharacter = GetComponentInChildren<AnimCharacter>();
+    }
     // Khởi tạo
     void Start()
     {
@@ -77,9 +82,9 @@ public class PhotonPlayerMovement : MonoBehaviourPun
         bool isMoving = horizontalInput > 0.05f || horizontalInput < -0.05f;
         if (PhotonNetwork.IsConnected)
         {
-            photonView.RPC("SetMoveAnim", RpcTarget.Others, isMoving); // Gọi RPC để đồng bộ animation cho các client khác
+            photonView.RPC("PlayMove", RpcTarget.Others, isMoving); // Gọi RPC để đồng bộ animation cho các client khác
         }
-        anim.SetBool("1_Move", isMoving); // local animation
+        animCharacter.PlayMove(isMoving); // local animation
         FlipSprite();
     }
 
@@ -140,10 +145,5 @@ public class PhotonPlayerMovement : MonoBehaviourPun
         Vector3 scale = transform.localScale;
         scale.x = faceRight ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
         transform.localScale = scale;
-    }
-    [PunRPC]
-    void SetMoveAnim(bool isMoving)
-    {
-        anim.SetBool("1_Move", isMoving);
     }
 }

@@ -47,6 +47,11 @@ public class CameraZoom : MonoBehaviour
             Vector3 midPoint = (player1.position + player2.position) / 2f;
             cam.transform.position = new Vector3(midPoint.x, midPoint.y, cam.transform.position.z);
         }
+        else
+        {
+            float targetZoom = zoomOutMin;
+            cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, targetZoom, Time.deltaTime * zoomSpeed);
+        }
     }
     void bounds()
     {
@@ -78,6 +83,7 @@ public class CameraZoom : MonoBehaviour
                 if (pv.Owner.ActorNumber == 1)
                 {
                     player1 = player.transform;
+                    
                 }
                 else if (pv.Owner.ActorNumber == 2)
                 {
@@ -88,6 +94,8 @@ public class CameraZoom : MonoBehaviour
         if(player1 != null && player2 != null)
         {
             CancelInvoke("AssignPlayers"); // Hủy việc gọi lại nếu đã gán được cả hai người chơi
+            Debug.Log("Players assigned to CameraZoom.");
+            FindAnyObjectByType<UICharacter>().Setcharacter(player1.GetComponent<Character>(), player2.GetComponent<Character>());
         }
     }
     void TryAssignPlayers()
