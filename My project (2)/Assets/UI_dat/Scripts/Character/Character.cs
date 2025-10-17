@@ -73,4 +73,5 @@ public class Character : MonoBehaviourPun
         status.health = maxHealth;
         OnHealthChanged?.Invoke(status.currentHealth, status.health);
     }
+    
 }
