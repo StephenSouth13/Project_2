@@ -6,7 +6,7 @@ public class AnimCharacter : MonoBehaviourPun
     private Animator animator;
     void Awake()
     {
-        animator = GetComponentInParent<Animator>();
+        animator = GetComponentInChildren<Animator>();
     }
     public void SetBoolDefault()
     {
