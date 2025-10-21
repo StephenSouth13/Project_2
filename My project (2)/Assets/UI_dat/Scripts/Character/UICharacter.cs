@@ -3,10 +3,12 @@ using UnityEngine.UI;
 
 public class UICharacter : MonoBehaviour
 {
+    [Header("Health Bars")]
     public Slider healthBar1;
     public Slider healthBar2;
-    public Character character1;
-    public Character character2;
+    [Header("Characters")]
+    public CombatCharacter character1;
+    public CombatCharacter character2;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -29,7 +31,7 @@ public class UICharacter : MonoBehaviour
             healthBar2.value = currentHealth / maxHealth;
         }
     }
-    public void Setcharacter(Character c1, Character c2)
+    public void Setcharacter(CombatCharacter c1, CombatCharacter c2)
     {
         if (character1 != null || character2 != null)
         {

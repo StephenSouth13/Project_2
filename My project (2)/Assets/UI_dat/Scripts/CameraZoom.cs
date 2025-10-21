@@ -95,7 +95,7 @@ public class CameraZoom : MonoBehaviour
         {
             CancelInvoke("AssignPlayers"); // Hủy việc gọi lại nếu đã gán được cả hai người chơi
             Debug.Log("Players assigned to CameraZoom.");
-            FindAnyObjectByType<UICharacter>().Setcharacter(player1.GetComponent<Character>(), player2.GetComponent<Character>());
+            FindAnyObjectByType<UICharacter>().Setcharacter(player1.GetComponent<CombatCharacter>(), player2.GetComponent<CombatCharacter>());
         }
     }
     void TryAssignPlayers()
