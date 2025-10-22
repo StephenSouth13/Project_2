@@ -1,54 +1,108 @@
+using System.Collections.Generic;
+using NUnit.Framework;
 using Photon.Pun;
 using UnityEngine;
 
 public class CombatHitbox : MonoBehaviourPun
 {
     [Header("Attack State")] // nên để ở CombatCharacter?
-    bool isAttacking = false;
-    float attackTimer = 0f;
-    float attackCooldown = 1f; // Thời gian giữa các đòn tấn công
+    public bool isAttacking = false;
+    float attackTimer = 0f; // Tạm thời chưa dùng đến
+    float attackCooldown = 1f; // Tạm thời chưa dùng đến
     [Header("Attack Point")]
+
     public Transform attackPoint;
+
     [Header("Attack Zone")]
     public Vector2 zoneSize = new Vector2(1f, 1f);
     public float angle = 0f;
     public LayerMask targetLayers;
 
+    [Header("components_Parent")]
+    private PhotonView pv;
+    private CombatCharacter combatCharacter;
+
+    [Header("system")]
+    Collider2D[] overlapBuffer = new Collider2D[10]; // Bộ đệm để lưu trữ các collider phát hiện được
+    private HashSet<int> alreadyHitTargets = new HashSet<int>(); // Lưu trữ các mục tiêu đã bị đánh trúng trong lần tấn công hiện tại
+    float damageAmount; // Lượng sát thương
+    void Awake()
+    {
+        pv = GetComponentInParent<PhotonView>();
+        combatCharacter = GetComponentInParent<CombatCharacter>();
+    }
+    void Start()
+    {
+        if(combatCharacter != null)
+        {
+            damageAmount = combatCharacter.status.attackPower;
+        }
+    }
     void Update()
     {
         if (isAttacking)
         {
-            attackTimer += Time.deltaTime;
-            if (attackTimer >= attackCooldown)
-            {
-                DetectInRange();
-            }
+            
+            DetectInRange();
+            
         }
     }
-    public void StartAttack() => isAttacking = true;
+    public void StartAttack()
+    {
+        if (!pv.IsMine) return; // Chỉ máy sở hữu mới xử lý
+        Debug.Log("Start Attack");
+        isAttacking = true;
+        alreadyHitTargets.Clear(); // Xóa danh sách mục tiêu đã bị đánh trúng trước đó
+    }
+
     public void StopAttack()
     {
+        if (!pv.IsMine) return;
         Debug.Log("Stop Attack");
         isAttacking = false;
-        attackTimer = 0f;
+        alreadyHitTargets.Clear(); // Xóa danh sách mục tiêu đã bị đánh trúng trước đó
     }
+
     public void DetectInRange()
     {
-        Collider2D[] hit = Physics2D.OverlapBoxAll(attackPoint.position, zoneSize, angle, targetLayers);
-        foreach (Collider2D target in hit)
+        if(pv.IsMine == false) return; // Chỉ xử lý nếu đây là nhân vật của người chơi hiện tại
+        overlapBuffer = Physics2D.OverlapBoxAll(attackPoint.position, zoneSize, angle ,targetLayers);
+        int count = overlapBuffer.Length;
+        for (int i = 0; i < count; i++)
         {
-            var combat = target.GetComponent<CombatCharacter>();
-            if (combat == null) continue;
-            if (combat.photonView.IsMine)
+            var target = overlapBuffer[i];
+            if (target == null) continue;
+            var targetPv = target.GetComponent<PhotonView>();
+            int targetId = (targetPv != null) ? targetPv.ViewID : target.gameObject.GetInstanceID(); // Sử dụng ViewID nếu có, nếu không thì dùng Id của InstanceID
+            if (alreadyHitTargets.Contains(targetId))
             {
-                continue; // Không tấn công chính mình
+                continue; // Bỏ qua nếu mục tiêu đã bị đánh trúng trong lần tấn công này
             }
-            var pv = target.GetComponent<PhotonView>();
-            if (pv != null)
+            if (targetPv != null && pv != null && targetPv.ViewID == pv.ViewID)
             {
-                pv.RPC("TakeDamage", pv.Owner, 10f);
+                continue; // Bỏ qua nếu là cùng một người chơi
             }
-
+            if(targetPv != null)
+            {
+                if (targetPv == null || targetPv.ViewID <= 0)
+                {
+                    Debug.Log("Target PhotonView không hợp lệ.");
+                    continue;
+                }
+                var known = PhotonNetwork.GetPhotonView(targetPv.ViewID);
+                if (known == null)
+                {
+                    Debug.Log("Target PhotonView không được biết đến trong mạng.");
+                    continue;
+                }
+                Debug.Log("Hit " + target.name);
+                alreadyHitTargets.Add(targetId); // Đánh dấu mục tiêu đã bị đánh trúng
+                targetPv.RPC("TakeDamage", RpcTarget.All,targetPv.ViewID, damageAmount); // Gọi RPC TakeDamage trên đối tượng bị tấn công
+            }
+            // else
+            // {
+            //     // Xử lý đối tượng không có PhotonView nếu cần thiết
+            // }
         }
     }
     void OnDrawGizmosSelected() // Vẽ vùng tấn công trong Scene view

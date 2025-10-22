@@ -29,10 +29,6 @@ public class CombatCharacter : MonoBehaviourPun
             return; // Nếu đã chết thì không làm gì cả
         }
         if (photonView.IsMine == false) return; // Chỉ xử lý nếu đây là nhân vật của người chơi hiện tại
-        if (Input.GetKeyDown(KeyCode.K)) // Test lấy sát thương bằng phím K
-        {
-            TakeDamage(20f);
-        }
         if (Input.GetKeyDown(KeyCode.J))
         {
             
@@ -41,9 +37,14 @@ public class CombatCharacter : MonoBehaviourPun
         }
     }
     [PunRPC]
-    public void TakeDamage(float damage)
+    public void TakeDamage(int viewId,float damage)
     {
-        if (photonView.IsMine == false) return; // Chỉ xử lý nếu đây là nhân vật của người chơi hiện tại
+        if (photonView.ViewID != viewId)
+        {
+            Debug.Log("ViewID không khớp, không nhận sát thương");
+            return;
+        } 
+        Debug.Log("Character took " + damage + " damage.");
         photonView.RPC("PlayTrigerDamaged", RpcTarget.Others); // Đồng bộ hoạt ảnh bị thương cho các client khác
         animCharacter.PlayTrigerDamaged();
         status.TakeDamage(damage);
