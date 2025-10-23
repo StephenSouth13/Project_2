@@ -4091,6 +4091,9 @@ MonoBehaviour:
   runSpeed: 8
   jumpForce: 12
   maxJumps: 2
+  isJump: 0
+  audioSource: {fileID: 0}
+  jumpSound: {fileID: 0}
   opponentTransform: {fileID: 0}
   canFlipWhileAirborne: 1
   groundCheck: {fileID: 724874903962068984}
@@ -4098,6 +4101,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 256
+  jumpsRemaining: 0
 --- !u!1 &8280191759538428995
 GameObject:
   m_ObjectHideFlags: 0
