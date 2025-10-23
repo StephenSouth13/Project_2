@@ -31,9 +31,24 @@ public class CombatCharacter : MonoBehaviourPun
         if (photonView.IsMine == false) return; // Chỉ xử lý nếu đây là nhân vật của người chơi hiện tại
         if (Input.GetKeyDown(KeyCode.J))
         {
-            
+
             animCharacter.PlayTriggerAttack();
             photonView.RPC("PlayTriggerAttack", RpcTarget.Others);
+        }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            animCharacter.PlayTriggerAttack2();
+            photonView.RPC("PlayTriggerAttack2", RpcTarget.Others);
+        }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            animCharacter.PlayTriggerAttack3();
+            photonView.RPC("PlayTriggerAttack3", RpcTarget.Others);
+        }
+        if (Input.GetKeyDown(KeyCode.Semicolon))
+        {
+            animCharacter.PlayTriggerAttack4();
+            photonView.RPC("PlayTriggerAttack4", RpcTarget.Others);
         }
     }
     [PunRPC]

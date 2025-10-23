@@ -39,4 +39,19 @@ public class AnimCharacter : MonoBehaviourPun
     {
         animator.SetTrigger("4_Death");
     }
+    [PunRPC]
+    public void PlayTriggerAttack2()
+    {
+        animator.SetTrigger("2_1_Attack");
+    }
+    [PunRPC]
+    public void PlayTriggerAttack3()
+    {
+        animator.SetTrigger("2_2_Attack");
+    }
+    [PunRPC]
+    public void PlayTriggerAttack4()
+    {
+        animator.SetTrigger("2_3_Attack");
+    }
 }
