@@ -18,12 +18,17 @@ public class PhotonPlayerMovement : MonoBehaviourPun
     // Thành phần và Trạng thái
     [Header("Components")]
     public Rigidbody2D rb;
-    public Animator anim;
-
+    public AnimCharacter animCharacter;
     private bool isGrounded;
     private float horizontalInput;
     public int jumpsRemaining; // Số lần nhảy còn lại
 
+    void Awake()
+    {
+        // Lấy thành phần Rigidbody2D và Animator
+        rb = GetComponent<Rigidbody2D>();
+        animCharacter = GetComponent<AnimCharacter>();
+    }
     // Khởi tạo
     void Start()
     {
@@ -64,7 +69,7 @@ public class PhotonPlayerMovement : MonoBehaviourPun
         if (isGrounded && !isJump)
         {
             jumpsRemaining = maxJumps; isJump = true;
-            Debug.Log("Reset jumps to: " + jumpsRemaining);
+            // Debug.Log("Reset jumps to: " + jumpsRemaining);
         }
     }
 
@@ -75,8 +80,11 @@ public class PhotonPlayerMovement : MonoBehaviourPun
         Vector2 movement = new Vector2(horizontalInput * runSpeed, rb.linearVelocity.y);
         rb.linearVelocity = movement;
         bool isMoving = horizontalInput > 0.05f || horizontalInput < -0.05f;
-        photonView.RPC("SetMoveAnim", RpcTarget.Others, isMoving); // Gọi RPC để đồng bộ animation cho các client khác
-        anim.SetBool("1_Move", isMoving); // local animation
+        if (PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
+        {
+            photonView.RPC("PlayMove", RpcTarget.Others, isMoving); // Gọi RPC để đồng bộ animation cho các client khác
+        }
+        animCharacter.PlayMove(isMoving); // local animation
         FlipSprite();
     }
 
@@ -113,7 +121,7 @@ public class PhotonPlayerMovement : MonoBehaviourPun
                 defaultFace = true;
                 // Quay Phải (Scale Âm, vì bạn đã định nghĩa 'Quay Phải' là -currentAbsScaleX)
                 targetScaleX = -currentAbsScaleX;
-
+                
                 photonView.RPC("Flip", RpcTarget.Others, defaultFace); // Gọi RPC để lật sprite cho các client khác
             }
             else if (direction < 0) // Di chuyển sang TRÁI
@@ -137,10 +145,5 @@ public class PhotonPlayerMovement : MonoBehaviourPun
         Vector3 scale = transform.localScale;
         scale.x = faceRight ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
         transform.localScale = scale;
-    }
-    [PunRPC]
-    void SetMoveAnim(bool isMoving)
-    {
-        anim.SetBool("1_Move", isMoving);
     }
 }

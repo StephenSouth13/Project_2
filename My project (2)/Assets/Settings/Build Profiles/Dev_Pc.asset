@@ -20,6 +20,8 @@ MonoBehaviour:
     rid: 2821735153142595649
   m_OverrideGlobalSceneList: 1
   m_Scenes:
+  - m_enabled: 1
+    m_path: Assets/Scenes/DAT_Scene/Battle_Fight.unity
   - m_enabled: 0
     m_path: Assets/Scenes/DAT_Scene/Battle_Offline_Test.unity
   - m_enabled: 1
@@ -109,7 +111,7 @@ MonoBehaviour:
     - line: '|   androidApplicationEntry: 2'
     - line: '|   defaultIsNativeResolution: 0'
     - line: '|   macRetinaSupport: 1'
-    - line: '|   runInBackground: 0'
+    - line: '|   runInBackground: 1'
     - line: '|   muteOtherAudioSources: 0'
     - line: '|   Prepare IOS For Recording: 0'
     - line: '|   Force IOS Speakers When Recording: 0'
@@ -133,7 +135,7 @@ MonoBehaviour:
     - line: '|   xboxEnableFitness: 0'
     - line: '|   visibleInBackground: 1'
     - line: '|   allowFullscreenSwitch: 1'
-    - line: '|   fullscreenMode: 1'
+    - line: '|   fullscreenMode: 3'
     - line: '|   xboxSpeechDB: 0'
     - line: '|   xboxEnableHeadOrientation: 0'
     - line: '|   xboxEnableGuest: 0'
@@ -837,7 +839,7 @@ MonoBehaviour:
       type: {class: WindowsPlatformSettings, ns: UnityEditor.WindowsStandalone, asm: UnityEditor.WindowsStandalone.Extensions}
       data:
         m_Development: 1
-        m_ConnectProfiler: 1
+        m_ConnectProfiler: 0
         m_BuildWithDeepProfilingSupport: 0
         m_AllowDebugging: 1
         m_WaitForManagedDebugger: 0
