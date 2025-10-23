@@ -1,14 +1,13 @@
 ﻿using UnityEngine;
-using Photon.Pun; // Cần thiết cho Multiplayer
+using Photon.Pun;
 
-public class PlayerAttack : MonoBehaviourPun // Kế thừa MonoBehaviourPun
+public class PlayerAttack : MonoBehaviourPun
 {
     [Header("Attack Settings")]
     public int damage = 20;
-    
 
     [Header("HitBox Collider")]
-    public Collider2D swordHitBoxCollider; // Kéo và thả Box Collider 2D vào đây
+    public Collider2D swordHitBoxCollider;
     private bool hasHit = false;
 
     [Header("Cooldown")]
@@ -16,52 +15,47 @@ public class PlayerAttack : MonoBehaviourPun // Kế thừa MonoBehaviourPun
     private float nextAttackTime = 0f;
 
     private Animator anim;
-    // PhotonView đã có sẵn từ MonoBehaviourPun, không cần khai báo lại private PhotonView photonView;
+    public AudioSource audioSource;
+    public AudioClip attackSound;
+
 
     void Start()
     {
-        // Lấy Animator (giả sử nó nằm trên đối tượng con như đã sửa ở PlayerController)
         anim = GetComponentInChildren<Animator>();
         if (anim == null) Debug.LogError("Animator not found for PlayerAttack!");
+
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
     }
 
     void Update()
     {
-        // 1. CHỈ XỬ LÝ INPUT TẤN CÔNG CHO CHÍNH NGƯỜI CHƠI NÀY
-        //if (!photonView.IsMine) return; //tạm comment để test
-
-        //if (Time.time >= nextAttackTime)
-        //{
-            if (Input.GetKeyDown(KeyCode.J))
-            {
-                Debug.Log("Player Attack Initiated!");
-                PerformAttack();
-               // nextAttackTime = Time.time + 1f / attackRate;
-           // }
+       
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            Debug.Log("Player Attack Initiated!");
+            PerformAttack();
         }
     }
 
     void PerformAttack()
     {
-        // 2. KÍCH HOẠT ANIMATION
         if (anim != null)
         {
-            // Set Trigger "Attack" (Phải có parameter này trong Animator)
             anim.SetTrigger("Attack");
         }
-
         Debug.Log("Player đánh!");
-
-        // **LƯU Ý:** Logic gây sát thương (DealDamage) KHÔNG nằm ở đây nữa,
-        // mà nó sẽ được gọi bởi Animation Event tại khung hình chạm.
+        PlaySFX(attackSound);
     }
 
     // =========================================================
     // HÀM GÂY SÁT THƯƠNG (Được gọi bởi Animation Event)
     // =========================================================
-
     public void DealDamage() // Tên hàm này phải khớp với Animation Event
     {
+        // QUAN TRỌNG: Chỉ client sở hữu Player mới được khởi động logic sát thương
         if (!photonView.IsMine) return;
 
         if (swordHitBoxCollider != null)
@@ -71,8 +65,6 @@ public class PlayerAttack : MonoBehaviourPun // Kế thừa MonoBehaviourPun
             Debug.Log("HitBox Activated.");
         }
     }
-
-    
 
     public void DisableHitBox() // Gọi từ Animation Event (End Swing)
     {
@@ -85,26 +77,30 @@ public class PlayerAttack : MonoBehaviourPun // Kế thừa MonoBehaviourPun
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other == swordHitBoxCollider || swordHitBoxCollider.enabled == false) return;
-        // Chỉ xử lý va chạm của HitBox mà bạn vừa bật
-        if (other.CompareTag("Enemy") || other.GetComponent<Health>() != null)
+        // LOG VÀ KIỂM TRA ĐIỀU KIỆN CHẶN
+        Debug.Log($"5. OnTriggerEnter2D Fired! Va chạm với: {other.gameObject.name}");
+
+        // SỬA LỖI: BỎ KHỐI {} KHÔNG CẦN THIẾT
+        if (swordHitBoxCollider == null || swordHitBoxCollider.enabled == false || hasHit)
         {
-            if (hasHit) return;
-            // Lấy PhotonView của đối thủ (Kiểm tra lại Enemy Layers)
-            PhotonView enemyPV = other.GetComponent<PhotonView>();
+            // Log này chỉ xuất hiện NẾU va chạm xảy ra nhưng bị chặn bởi các cờ
+            Debug.Log("6. OnTriggerEnter2D Aborted: HitBox null/disabled/already hit.");
+            return; // Lệnh RETURN thoát khỏi hàm nếu điều kiện chặn đúng
+        }
 
-            if (enemyPV != null)
-            {
-                // GỌI RPC TAKE_DAMAGE ĐỂ ĐỒNG BỘ SÁT THƯƠNG
-                enemyPV.RPC("TakeDamage", RpcTarget.All, damage);
-                Debug.Log($"Hit {other.gameObject.name} via Collider Trigger.");
+        // 1. Chỉ xử lý va chạm với Enemy
+        if (other.CompareTag("Enemy"))
+        {
+            Destroy(other.gameObject);
+        }
+       
+    }
 
-                // Đánh dấu đã hit để tránh gây sát thương lặp lại
-                hasHit = true;
-
-                // Tắt HitBox ngay sau khi đánh trúng (để chỉ đánh 1 lần/lượt vung)
-                DisableHitBox();
-            }
+    void PlaySFX(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+        {
+            audioSource.PlayOneShot(clip);
         }
     }
 }
