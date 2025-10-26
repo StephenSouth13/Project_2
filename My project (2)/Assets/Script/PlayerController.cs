@@ -1,25 +1,21 @@
 ﻿using UnityEngine;
 using Photon.Pun;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviourPun
 {
     // Cài đặt Tốc độ và Lực Nhảy (Đã tối ưu cho cảm giác Battle Game)
     [Header("Movement Settings")]
     public float runSpeed = 7.5f;     // Tốc độ
-    public float jumpForce = 7f;     // Lực nhảy
+    public float jumpForce = 7f;      // Lực nhảy
     public int maxJumps = 2;          // Số lần nhảy tối đa (Nhảy Đôi)
     public bool isJump;
 
-    // Tham chiếu đến thành phần Audio Source trên nhân vật
-    public AudioSource audioSource;
-    // Các file âm thanh mà chúng ta sẽ gán trong Inspector
-    public AudioClip jumpSound;
-    
+    // ĐỊNH NGHĨA KEY SFX (Phải khớp với Key trong AudioManager Inspector)
+    private const string JUMP_SFX_KEY = "Jump";
 
     [Header("Combat Interaction")]
-    public Transform opponentTransform; // Tham chiếu đến đối tượng Đối thủ (Enemy)
-    public bool canFlipWhileAirborne = true; // Biến bật/tắt logic xoay khi nhảy (Mặc định là BẬT)
-    // Lưu ý: Biến này cần được Dev 2 cung cấp thông tin (tham chiếu đến kẻ địch Dummy/Thật)
+    public Transform opponentTransform;
+    public bool canFlipWhileAirborne = true;
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -30,9 +26,10 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private bool isGrounded;
     private float horizontalInput;
-    public int jumpsRemaining; // Số lần nhảy còn lại
+    public int jumpsRemaining;
     private PhotonView photonView;
     private Animator anim;
+
     // Khởi tạo
     void Start()
     {
@@ -41,14 +38,11 @@ public class PlayerController : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         if (anim == null)
         {
-            Debug.LogError("Animator not found! Check if it's on UniRoot."); 
+            Debug.LogError("Animator not found! Check if it's on UniRoot.");
         }
         jumpsRemaining = maxJumps; // Khởi tạo số lần nhảy
 
-        if (audioSource == null)
-        {
-            audioSource = GetComponent<AudioSource>();
-        }
+        // Đã xóa logic tìm kiếm AudioSource cục bộ
     }
 
     // Cập nhật Vật lý (FixedUpdate)
@@ -60,36 +54,35 @@ public class PlayerController : MonoBehaviour
         // Reset số lần nhảy khi chạm đất
         if (isGrounded && !isJump)
         {
-            jumpsRemaining = maxJumps; isJump = true;
+            jumpsRemaining = maxJumps;
+            isJump = true;
         }
-
 
         // 2. DI CHUYỂN NGANG
         MoveHorizontal();
-        
     }
 
     // Cập nhật Input (Update)
     void Update()
     {
-   
+        // QUAN TRỌNG: Chỉ client sở hữu mới xử lý Input
         if (photonView.IsMine)
         {
+            Debug.Log("Player đang xử lý Input (IsMine = TRUE)");
             HandleInput();
             UpdateAnimations();
         }
-        else
-        {
-           
-        }
+        // Logic đồng bộ vị trí/Animation cho client không sở hữu (được xử lý bởi PhotonView/Photon Transform View)
     }
+
     private void HandleInput()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
-        
-        // 3. NHẢY (Bây giờ đã hỗ trợ Nhảy Đôi)
+
+        // 3. NHẢY (Hỗ trợ Nhảy Đôi)
         if (Input.GetButtonDown("Jump"))
         {
+            Debug.Log("Input Nhảy được nhận!");
             Jump();
         }
 
@@ -100,6 +93,7 @@ public class PlayerController : MonoBehaviour
 
     private void MoveHorizontal()
     {
+        // Sử dụng velocity để di chuyển
         rb.linearVelocity = new Vector2(horizontalInput * runSpeed, rb.linearVelocity.y);
     }
 
@@ -108,28 +102,57 @@ public class PlayerController : MonoBehaviour
         // Chỉ cho phép nhảy khi còn lượt nhảy
         if (jumpsRemaining > 0 && isJump)
         {
-            // Đặt vận tốc Y về 0 để lực nhảy nhất quán (tránh nhảy thêm lực từ lần rơi trước)
+            // Đặt vận tốc Y về 0
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
 
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
             jumpsRemaining--; // Giảm số lần nhảy
-            PlaySFX(jumpSound);
+
+            // 1. Chỉ chủ sở hữu mới gửi lệnh RPC
+            ////if (photonView.IsMine && AudioManager.Instance != null)
+            ////{
+            ////    // VỊ TRÍ 1: Xác nhận GỬI lệnh RPC Jump
+            ////    Debug.Log("1. GỬI RPC SFX: Jump");
+            ////    // Gửi lệnh RPC đến TẤT CẢ client để đồng bộ âm thanh
+            ////    photonView.RPC("Rpc_PlaySFX", RpcTarget.All, JUMP_SFX_KEY);
+            ////}
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.Play2D(JUMP_SFX_KEY);
+            }
         }
         else
         {
+        
             isJump = false;
         }
     }
 
-    
+    // THÊM HÀM RPC ĐỂ ĐỒNG BỘ ÂM THANH
+    [PunRPC]
+    void Rpc_PlaySFX(string sfxKey)
+    {
+        // VỊ TRÍ 2: Xác nhận NHẬN lệnh RPC và cố gắng phát
+        Debug.Log($"2. NHẬN RPC, cố gắng phát SFX: {sfxKey}");
+        // TẤT CẢ client sẽ chạy lệnh này, phát SFX qua AudioManager
+        if (AudioManager.Instance != null)
+        {
+            // Âm thanh 2D (Play2D) dùng cho SFX của Player/UI
+            AudioManager.Instance.Play2D(sfxKey);
+        }
+        else
+        {
+            Debug.LogError("AudioManager.Instance là NULL! Không thể phát SFX.");
+        }
+    }
+
     private void FlipSprite()
     {
-        
+        // ... (Giữ nguyên logic xoay Sprite)
         float currentAbsScaleX = Mathf.Abs(transform.localScale.x);
         float direction = horizontalInput;
 
-      
         if (Mathf.Abs(direction) > 0.01f)
         {
             float targetScaleX = transform.localScale.x;
@@ -150,7 +173,7 @@ public class PlayerController : MonoBehaviour
                 transform.localScale.z
             );
         }
-       
+
         else if (opponentTransform != null) // Nếu không có input di chuyển, quay mặt về phía đối thủ
         {
             float playerX = transform.position.x;
@@ -170,15 +193,9 @@ public class PlayerController : MonoBehaviour
         if (anim == null) return;
 
         // 1. Run/Idle
-        bool IsMoving = Mathf.Abs(horizontalInput) > 0.01f; 
-        anim.SetBool("1_Move", IsMoving); 
+        bool IsMoving = Mathf.Abs(horizontalInput) > 0.01f;
+        anim.SetBool("1_Move", IsMoving);
     }
 
-    void PlaySFX (AudioClip clip)
-    {
-        if (audioSource != null && clip != null)
-        {
-            audioSource.PlayOneShot(clip);
-        }
-    }
+    // Đã xóa hàm PlaySFX cục bộ
 }

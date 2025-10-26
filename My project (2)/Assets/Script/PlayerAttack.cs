@@ -3,6 +3,7 @@ using Photon.Pun;
 
 public class PlayerAttack : MonoBehaviourPun
 {
+    // ... (Giữ nguyên các khai báo khác)
     [Header("Attack Settings")]
     public int damage = 20;
 
@@ -12,95 +13,131 @@ public class PlayerAttack : MonoBehaviourPun
 
     [Header("Cooldown")]
     public float attackRate = 2f;
-    private float nextAttackTime = 0f;
+    private float nextAttackTime = 0f; // Bắt đầu từ 0 để cho phép tấn công ngay
 
     private Animator anim;
-    public AudioSource audioSource;
-    public AudioClip attackSound;
 
+    // ĐỊNH NGHĨA KEY SFX "chém trượt"
+    private const string ATTACK_SFX_KEY = "Missed";
 
     void Start()
     {
         anim = GetComponentInChildren<Animator>();
         if (anim == null) Debug.LogError("Animator not found for PlayerAttack!");
-
-        if (audioSource == null)
-        {
-            audioSource = GetComponent<AudioSource>();
-        }
     }
 
     void Update()
     {
-       
-        if (Input.GetKeyDown(KeyCode.J))
+        // QUAN TRỌNG: Chỉ client sở hữu mới xử lý Input
+        if (!photonView.IsMine) return;
+
+        // KIỂM TRA INPUT và COOLDOWN
+        if (Input.GetKeyDown(KeyCode.J)) //&& Time.time >= nextAttackTime)
         {
             Debug.Log("Player Attack Initiated!");
             PerformAttack();
         }
+        //Rpc_PlaySFX(ATTACK_SFX_KEY); // Gọi trực tiếp hàm RPC để phát SFX ngay lập tức
+        float dt = Time.deltaTime;
+        Debug.Log("ABCXYZ" + dt );
+        Debug.Log($"ABCXYZ: {dt}");
+        //float dt = Time.deltaTime;
+        int frame = Time.frameCount;
+        Debug.LogFormat("ABCXYZ - Delta Time: {0}, Frame: {1}", dt, frame);
+    }
+    private void FixedUpdate()
+    {
+        float dt = Time.fixedDeltaTime;
+        
+    }
+    private void LateUpdate()
+    {
+        
     }
 
     void PerformAttack()
     {
+        // 1. Đặt Cooldown
+        nextAttackTime = Time.time + 1f / attackRate;
+
+        // 2. Kích hoạt Animation
         if (anim != null)
         {
             anim.SetTrigger("Attack");
         }
         Debug.Log("Player đánh!");
-        PlaySFX(attackSound);
+        Rpc_PlaySFX(ATTACK_SFX_KEY); // Gọi trực tiếp hàm RPC để phát SFX ngay lập tức
+        // 3. Gửi lệnh RPC để đồng bộ âm thanh
+        // Gửi lệnh đến TẤT CẢ client để họ đều phát SFX
+        //if (photonView.IsMine && AudioManager.Instance != null)
+        //{
+        //    // VỊ TRÍ 1: Xác nhận GỬI lệnh RPC Attack
+        //    Debug.Log("1. GỬI RPC SFX: Attack");
+        //    photonView.RPC("Rpc_PlaySFX", RpcTarget.All, ATTACK_SFX_KEY);
+        //}
     }
+
+    // =========================================================
+    // HÀM RPC (ĐỒNG BỘ MẠNG)
+    // =========================================================
+   
+    void Rpc_PlaySFX(string sfxKey)
+    {
+        // TẤT CẢ client nhận lệnh này và phát âm thanh qua AudioManager
+        if (AudioManager.Instance != null)
+        {
+            // Âm thanh 2D (Play2D) thường dùng cho SFX của Player/UI
+            AudioManager.Instance.Play2D(sfxKey);
+        }
+    }
+
 
     // =========================================================
     // HÀM GÂY SÁT THƯƠNG (Được gọi bởi Animation Event)
     // =========================================================
-    public void DealDamage() // Tên hàm này phải khớp với Animation Event
+    public void DealDamage()
     {
-        // QUAN TRỌNG: Chỉ client sở hữu Player mới được khởi động logic sát thương
+        // ... (Giữ nguyên logic HitBox và IsMine check)
         if (!photonView.IsMine) return;
 
         if (swordHitBoxCollider != null)
         {
-            swordHitBoxCollider.enabled = true; // BẬT HitBox (Trigger)
-            hasHit = false; // Reset cờ hit
+            swordHitBoxCollider.enabled = true;
+            hasHit = false;
             Debug.Log("HitBox Activated.");
         }
     }
 
-    public void DisableHitBox() // Gọi từ Animation Event (End Swing)
+    public void DisableHitBox()
     {
         if (swordHitBoxCollider != null)
         {
-            swordHitBoxCollider.enabled = false; // TẮT HitBox
+            swordHitBoxCollider.enabled = false;
             Debug.Log("HitBox Deactivated.");
         }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // LOG VÀ KIỂM TRA ĐIỀU KIỆN CHẶN
         Debug.Log($"5. OnTriggerEnter2D Fired! Va chạm với: {other.gameObject.name}");
 
-        // SỬA LỖI: BỎ KHỐI {} KHÔNG CẦN THIẾT
+        // Kiểm tra điều kiện chặn (null/disabled/already hit)
         if (swordHitBoxCollider == null || swordHitBoxCollider.enabled == false || hasHit)
         {
-            // Log này chỉ xuất hiện NẾU va chạm xảy ra nhưng bị chặn bởi các cờ
             Debug.Log("6. OnTriggerEnter2D Aborted: HitBox null/disabled/already hit.");
-            return; // Lệnh RETURN thoát khỏi hàm nếu điều kiện chặn đúng
+            return;
         }
 
         // 1. Chỉ xử lý va chạm với Enemy
         if (other.CompareTag("Enemy"))
         {
-            Destroy(other.gameObject);
-        }
-       
-    }
+            // Logic gây sát thương sẽ được đặt ở đây.
+            // Ví dụ: other.GetComponent<HealthComponent>().TakeDamage(damage);
 
-    void PlaySFX(AudioClip clip)
-    {
-        if (audioSource != null && clip != null)
-        {
-            audioSource.PlayOneShot(clip);
+            // Tạm thời Destroy đối tượng (theo code cũ)
+            Destroy(other.gameObject);
+
+            hasHit = true; // Đánh dấu đã trúng để tránh gây sát thương nhiều lần (multi-hit)
         }
     }
 }
