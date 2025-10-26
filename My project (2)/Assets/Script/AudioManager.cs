@@ -26,8 +26,6 @@ public class AudioManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            // Đặt DontDestroyOnLoad ngay sau khi gán Instance
-           // DontDestroyOnLoad(gameObject);
 
             // Khởi tạo map
             map = new Dictionary<string, SoundEntry>();

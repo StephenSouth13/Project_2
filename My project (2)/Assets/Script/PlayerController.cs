@@ -109,14 +109,6 @@ public class PlayerController : MonoBehaviourPun
 
             jumpsRemaining--; // Giảm số lần nhảy
 
-            // 1. Chỉ chủ sở hữu mới gửi lệnh RPC
-            ////if (photonView.IsMine && AudioManager.Instance != null)
-            ////{
-            ////    // VỊ TRÍ 1: Xác nhận GỬI lệnh RPC Jump
-            ////    Debug.Log("1. GỬI RPC SFX: Jump");
-            ////    // Gửi lệnh RPC đến TẤT CẢ client để đồng bộ âm thanh
-            ////    photonView.RPC("Rpc_PlaySFX", RpcTarget.All, JUMP_SFX_KEY);
-            ////}
             if (AudioManager.Instance != null)
             {
                 AudioManager.Instance.Play2D(JUMP_SFX_KEY);
@@ -197,5 +189,4 @@ public class PlayerController : MonoBehaviourPun
         anim.SetBool("1_Move", IsMoving);
     }
 
-    // Đã xóa hàm PlaySFX cục bộ
 }

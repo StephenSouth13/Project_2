@@ -37,11 +37,11 @@ public class PlayerAttack : MonoBehaviourPun
             Debug.Log("Player Attack Initiated!");
             PerformAttack();
         }
-        //Rpc_PlaySFX(ATTACK_SFX_KEY); // Gọi trực tiếp hàm RPC để phát SFX ngay lập tức
+       
         float dt = Time.deltaTime;
         Debug.Log("ABCXYZ" + dt );
         Debug.Log($"ABCXYZ: {dt}");
-        //float dt = Time.deltaTime;
+        
         int frame = Time.frameCount;
         Debug.LogFormat("ABCXYZ - Delta Time: {0}, Frame: {1}", dt, frame);
     }
@@ -67,14 +67,7 @@ public class PlayerAttack : MonoBehaviourPun
         }
         Debug.Log("Player đánh!");
         Rpc_PlaySFX(ATTACK_SFX_KEY); // Gọi trực tiếp hàm RPC để phát SFX ngay lập tức
-        // 3. Gửi lệnh RPC để đồng bộ âm thanh
-        // Gửi lệnh đến TẤT CẢ client để họ đều phát SFX
-        //if (photonView.IsMine && AudioManager.Instance != null)
-        //{
-        //    // VỊ TRÍ 1: Xác nhận GỬI lệnh RPC Attack
-        //    Debug.Log("1. GỬI RPC SFX: Attack");
-        //    photonView.RPC("Rpc_PlaySFX", RpcTarget.All, ATTACK_SFX_KEY);
-        //}
+        
     }
 
     // =========================================================
@@ -131,9 +124,6 @@ public class PlayerAttack : MonoBehaviourPun
         // 1. Chỉ xử lý va chạm với Enemy
         if (other.CompareTag("Enemy"))
         {
-            // Logic gây sát thương sẽ được đặt ở đây.
-            // Ví dụ: other.GetComponent<HealthComponent>().TakeDamage(damage);
-
             // Tạm thời Destroy đối tượng (theo code cũ)
             Destroy(other.gameObject);
 
