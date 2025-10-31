@@ -21,11 +21,9 @@ MonoBehaviour:
   m_OverrideGlobalSceneList: 1
   m_Scenes:
   - m_enabled: 1
-    m_path: Assets/Scenes/DAT_Scene/Battle_Fight.unity
-  - m_enabled: 0
-    m_path: Assets/Scenes/DAT_Scene/Battle_Offline_Test.unity
+    m_path: Assets/Scenes/DAT_Scene/Main_game.unity
   - m_enabled: 1
-    m_path: Assets/Scenes/Khang_scenes/Khang.unity
+    m_path: Assets/Scenes/DAT_Scene/Battle_Fight.unity
   m_ScriptingDefines: []
   m_PlayerSettingsYaml:
     m_Settings:

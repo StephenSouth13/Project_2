@@ -3,11 +3,11 @@ using UnityEngine;
 using Photon.Realtime;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
-
+using UnityEngine.SceneManagement;  
 public class PhotonRoomManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] public List<RoomInfo> availableRooms = new List<RoomInfo>(); // Danh sách phòng hiện có
-    void createRoom() // Tạo phòng mới với tên duy nhất
+    public void createRoom() // Tạo phòng mới với tên duy nhất
     {
         int indexRoom = 1; // Bắt đầu từ Room_1
         string roomName = "Room_" + indexRoom; // Tên phòng mặc định
@@ -23,6 +23,7 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
         };
 
         PhotonNetwork.CreateRoom(roomName, roomOptions); // Tạo phòng với tên và tùy chọn đã định nghĩa
+        SceneManager.LoadSceneAsync("Battle_Fight"); // Load scene Battle_Fight khi tạo phòng
     }
     public void joinRoom() // Hàm sẽ được sử dụng cho button "Join Room" // Tham gia phòng ngẫu nhiên
     {
@@ -55,6 +56,7 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
         {
             PhotonNetwork.LeaveRoom();
             Debug.Log("✅ [leaveRoom] Đã rời phòng.");
+            SceneManager.LoadSceneAsync("Main_game"); // Quay lại scene Lobby khi rời phòng
         }
         else
         {
