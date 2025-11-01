@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviourPun
     public int maxJumps = 2;          // Số lần nhảy tối đa (Nhảy Đôi)
     public bool isJump;
 
+    
+
     // ĐỊNH NGHĨA KEY SFX (Phải khớp với Key trong AudioManager Inspector)
     private const string JUMP_SFX_KEY = "Jump";
 
@@ -21,6 +23,10 @@ public class PlayerController : MonoBehaviourPun
     public Transform groundCheck;
     public float checkRadius = 0.2f;
     public LayerMask groundLayer;
+
+    [Header("Jump VFX")]
+    public GameObject jumpVFXPrefab;
+    public Transform vfxSpawnPoint;
 
     // Thành phần và Trạng thái
     private Rigidbody2D rb;
@@ -107,6 +113,12 @@ public class PlayerController : MonoBehaviourPun
 
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
+            // GỌI HÀM TẠO VFX NGAY SAU KHI NHẢY (Chỉ nhảy lần đầu)
+            if (jumpsRemaining == maxJumps) // Chỉ khi nhảy từ mặt đất
+            {
+                SpawnJumpVFX();
+            }
+
             jumpsRemaining--; // Giảm số lần nhảy
 
             if (AudioManager.Instance != null)
@@ -186,7 +198,20 @@ public class PlayerController : MonoBehaviourPun
 
         // 1. Run/Idle
         bool IsMoving = Mathf.Abs(horizontalInput) > 0.01f;
-        anim.SetBool("1_Move", IsMoving);
+        anim.SetBool("isMoving", IsMoving);
     }
+
+    void SpawnJumpVFX()
+    {
+        if (jumpVFXPrefab == null || vfxSpawnPoint == null)
+        {
+            Debug.LogWarning("Jump VFX Prefab or Spawn Point missing in PlayerController!");
+            return;
+        }
+        GameObject vfx = Instantiate(jumpVFXPrefab, vfxSpawnPoint.position, Quaternion.identity);
+        vfx.transform.localScale = transform.localScale; // Đảm bảo VFX cùng hướng với Player
+
+
+    }    
 
 }

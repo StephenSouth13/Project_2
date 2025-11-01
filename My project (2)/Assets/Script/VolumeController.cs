@@ -4,9 +4,10 @@ using UnityEngine.UI; // Cần thiết để tương tác với UI Slider
 
 public class VolumeController : MonoBehaviour
 {
-    [SerializeField] private AudioMixer audioMixer; // Tham chiếu đến AudioMixer
+    [SerializeField] private AudioMixer audioMixer; /// Tham chiếu đến AudioMixer
     [SerializeField] private Slider musicSlider; // Tham chiếu đến UI Slider
     [SerializeField] private Slider SFXSlider; // Tham chiếu đến UI Slider
+
 
     private void Start()
     {

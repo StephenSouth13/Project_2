@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Photon.Pun;
 
+
 public class PlayerAttack : MonoBehaviourPun
 {
     // ... (Giữ nguyên các khai báo khác)
@@ -15,15 +16,23 @@ public class PlayerAttack : MonoBehaviourPun
     public float attackRate = 2f;
     private float nextAttackTime = 0f; // Bắt đầu từ 0 để cho phép tấn công ngay
 
-    private Animator anim;
+    [Header("Components")]
+    public Animator characterAnimator;
+
+    // Thêm vào đầu script, trong phần khai báo biến
+    [Header("Attack VFX")]
+    public GameObject retroImpactVFXPrefab; // Sẽ kéo Prefab vào đây
+    public Transform vfxSpawnPoint; // Sẽ kéo GameObject rỗng làm điểm xuất hiện vào đây
 
     // ĐỊNH NGHĨA KEY SFX "chém trượt"
     private const string ATTACK_SFX_KEY = "Missed";
 
     void Start()
     {
-        anim = GetComponentInChildren<Animator>();
-        if (anim == null) Debug.LogError("Animator not found for PlayerAttack!");
+        //anim = GetComponentInChildren<Animator>();
+        //if (anim == null) Debug.LogError("Animator not found for PlayerAttack!");
+        // Giờ dùng characterAnimator.SetTrigger("Attack")
+        if (characterAnimator == null) Debug.LogError("Animator NOT assigned in Inspector!");
     }
 
     void Update()
@@ -61,9 +70,13 @@ public class PlayerAttack : MonoBehaviourPun
         nextAttackTime = Time.time + 1f / attackRate;
 
         // 2. Kích hoạt Animation
-        if (anim != null)
+        //if (anim != null)
+        //{
+        //    anim.SetTrigger("Attack");
+        //}
+        if (characterAnimator != null) // Dùng tên biến mới
         {
-            anim.SetTrigger("Attack");
+            characterAnimator.SetTrigger("Attack");
         }
         Debug.Log("Player đánh!");
         Rpc_PlaySFX(ATTACK_SFX_KEY); // Gọi trực tiếp hàm RPC để phát SFX ngay lập tức
@@ -130,4 +143,37 @@ public class PlayerAttack : MonoBehaviourPun
             hasHit = true; // Đánh dấu đã trúng để tránh gây sát thương nhiều lần (multi-hit)
         }
     }
+
+    public void SpawnAttackVFX()
+    {
+
+        // Kiểm tra Prefab và Spawn Point
+        if (retroImpactVFXPrefab == null)
+        {
+            Debug.LogWarning("Retro Impact VFX Prefab is not assigned in the Inspector!");
+            return;
+        }
+
+        if (vfxSpawnPoint == null)
+        {
+            Debug.LogError("VFX Spawn Point is not assigned! Cannot spawn VFX.");
+            return;
+        }
+
+        Vector3 spawnPosition = vfxSpawnPoint.position;
+
+        GameObject vfx = Instantiate(retroImpactVFXPrefab, spawnPosition, Quaternion.identity);
+
+        float direction = transform.localScale.x;
+
+        // Áp dụng lật
+        Vector3 currentVFXScale = vfx.transform.localScale;
+        vfx.transform.localScale = new Vector3(
+            currentVFXScale.x * direction, // Dùng 'direction' đã tính
+            currentVFXScale.y,
+            currentVFXScale.z
+        );
+
+    }
+
 }
