@@ -35,7 +35,7 @@ public class CombatHitbox : MonoBehaviourPun
     {
         if(combatCharacter != null)
         {
-            damageAmount = combatCharacter.status.attackPower;
+            damageAmount = combatCharacter.status.GetAttackPower();
         }
     }
     void Update()

@@ -23,6 +23,7 @@ public class CameraZoom : MonoBehaviour
     {
         cam = Camera.main;
         TryAssignPlayers();
+
     }
 
     // Update is called once per frame

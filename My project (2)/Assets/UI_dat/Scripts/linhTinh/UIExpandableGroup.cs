@@ -51,9 +51,11 @@ public class UIExpandableGroup : MonoBehaviour
                 {
                     offsetY += firstItemOffset;
                 }
-                Vector2 targerPos = new Vector2(startPos.x, startPos.y + offsetY);
+                // Vector2 targetPos = new Vector2(startPos.x, startPos.y + offsetY);
+                Vector2 targetPos = startPos + new Vector2(0, offsetY);
+
                 RectTransform btnRect = menuFuntions_Btns[i].GetComponent<RectTransform>();
-                MoveItemToPos(targerPos, btnRect);
+                MoveItemToPos(targetPos, btnRect);
             }
         }
     }
@@ -76,16 +78,18 @@ public class UIExpandableGroup : MonoBehaviour
                 {
                     offsetX += firstItemOffset;
                 }
-                Vector2 targerPos = new Vector2(startPos.x + offsetX, startPos.y);
+                // Vector2 targerPos = new Vector2(startPos.x + offsetX, startPos.y);
+                Vector2 targetPos = startPos + new Vector2(offsetX, 0);
+
                 RectTransform btnRect = menuFuntions_Btns[i].GetComponent<RectTransform>();
-                MoveItemToPos(targerPos, btnRect);
+                MoveItemToPos(targetPos, btnRect);
             }
         }
     }
 
     void Init() // khởi tạo vị trí ban đầu của các nút chức năng trong menu
     {
-        startPos = toggleButton.GetComponent<RectTransform>().anchoredPosition;
+        startPos = toggleButton.GetComponent<RectTransform>().localPosition;
     }
     void MoveItemToPos(Vector2 targetPos, RectTransform btn) // di chuyển nút về vị trí targetPos
     {

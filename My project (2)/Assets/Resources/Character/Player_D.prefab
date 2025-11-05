@@ -2747,10 +2747,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   status:
-    health: 100
-    attackPower: 10
-    defense: 5
+    attackDamage: 1
+    strength: 10
+    dexterity: 5
     speed: 5
+    baseHealth: 100
+    baseAttackPower: 10
+    baseDefense: 5
+    baseAttackCooldown: 1
+    baseSpeed: 5
 --- !u!114 &-6804326253392190330
 MonoBehaviour:
   m_ObjectHideFlags: 0

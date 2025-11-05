@@ -12,10 +12,11 @@ public class CombatCharacter : MonoBehaviourPun
     {
         status.Init(); // Khởi tạo trạng thái nhân vật
         animCharacter = GetComponent<AnimCharacter>();
+        OnHealthChanged?.Invoke(status.currentHealth, status.GetMaxHealth()); // Khởi tạo thanh máu
+
     }
     void Start()
     {
-        OnHealthChanged?.Invoke(status.currentHealth, status.health); // Khởi tạo thanh máu
     }
     void Update()
     {
@@ -63,8 +64,8 @@ public class CombatCharacter : MonoBehaviourPun
         photonView.RPC("PlayTrigerDamaged", RpcTarget.Others); // Đồng bộ hoạt ảnh bị thương cho các client khác
         animCharacter.PlayTrigerDamaged();
         status.TakeDamage(damage);
-        photonView.RPC("SyncHealth", RpcTarget.Others, status.currentHealth, status.health);
-        OnHealthChanged?.Invoke(status.currentHealth, status.health);
+        photonView.RPC("SyncHealth", RpcTarget.Others, status.currentHealth);
+        OnHealthChanged?.Invoke(status.currentHealth, status.GetMaxHealth());
         if (status.IsDead())
         {
             Die();
@@ -85,10 +86,9 @@ public class CombatCharacter : MonoBehaviourPun
         PhotonNetwork.Destroy(gameObject);
     }
     [PunRPC]
-    public void SyncHealth(float currentHealth,float health) // Đồng bộ máu giữa các client
+    public void SyncHealth(float currentHealth ) // Đồng bộ máu giữa các client
     {
         status.SetCurrentHealth(currentHealth);
-        status.health = health;
-        OnHealthChanged?.Invoke(status.currentHealth, status.health);
+        OnHealthChanged?.Invoke(status.currentHealth, status.GetMaxHealth());
     }
 }

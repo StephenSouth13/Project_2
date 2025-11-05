@@ -6,6 +6,19 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;  
 public class PhotonRoomManager : MonoBehaviourPunCallbacks
 {
+    public static PhotonRoomManager instance;
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
     [SerializeField] public List<RoomInfo> availableRooms = new List<RoomInfo>(); // Danh sách phòng hiện có
     public void createRoom() // Tạo phòng mới với tên duy nhất
     {
@@ -21,7 +34,6 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
             MaxPlayers = 2,
             IsOpen = true
         };
-
         PhotonNetwork.CreateRoom(roomName, roomOptions); // Tạo phòng với tên và tùy chọn đã định nghĩa
         SceneManager.LoadSceneAsync("Battle_Fight"); // Load scene Battle_Fight khi tạo phòng
     }
@@ -41,7 +53,9 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
         {
             if (room.PlayerCount < room.MaxPlayers)
             {
+                SceneManager.LoadSceneAsync("Battle_Fight"); // Load scene Battle_Fight khi tham gia phòng
                 PhotonNetwork.JoinRoom(room.Name);
+
                 return;
             }
         }
@@ -50,6 +64,22 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
         EventSystem.current.SetSelectedGameObject(null); // Bỏ chọn button sau khi nhấn
 
     }
+    public void joinSpecificRoom(string roomName) // Tham gia phòng cụ thể theo tên
+    {
+        RoomInfo targetRoom = availableRooms.Find(r => r.Name == roomName);
+        if (targetRoom != null && targetRoom.PlayerCount < targetRoom.MaxPlayers)
+        {
+            
+            SceneManager.LoadSceneAsync("Battle_Fight"); // Load scene Battle_Fight khi tham gia phòng
+            PhotonNetwork.JoinRoom(roomName);
+            Debug.Log("✅ [joinSpecificRoom] Tham gia phòng: " + roomName);
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ [joinSpecificRoom] Phòng không tồn tại hoặc đã đầy: " + roomName);
+        }
+        EventSystem.current.SetSelectedGameObject(null); // Bỏ chọn button sau khi nhấn
+    }
     public void leaveRoom() // Hàm sẽ được sử dụng cho button "Leave Room" // Rời phòng hiện tại
     {
         if (PhotonNetwork.InRoom)
@@ -57,6 +87,7 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
             PhotonNetwork.LeaveRoom();
             Debug.Log("✅ [leaveRoom] Đã rời phòng.");
             SceneManager.LoadSceneAsync("Main_game"); // Quay lại scene Lobby khi rời phòng
+
         }
         else
         {
@@ -86,7 +117,7 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
             PhotonNetwork.JoinLobby(); // Tham gia lại Lobby nếu cần
         }
     }
-    public override void OnPlayerLeftRoom(Player otherPlayer)
+    public override void OnPlayerLeftRoom(Player otherPlayer) // ai xử lý ? là master client khi có người rời phòng
     {
         Debug.Log("⚠️ [OnPlayerLeftRoom] Người chơi rời phòng: " + otherPlayer.NickName);
         if (PhotonNetwork.IsMasterClient)

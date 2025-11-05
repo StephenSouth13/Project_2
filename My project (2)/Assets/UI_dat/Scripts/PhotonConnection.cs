@@ -3,9 +3,23 @@ using UnityEngine;
 
 public class PhotonConnection : MonoBehaviourPunCallbacks
 {
+    public static PhotonConnection instance;
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+            CheckInternetAndConnect();
+
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
     void Start()
     {
-        CheckInternetAndConnect();
     }
     void CheckInternetAndConnect()
     {

@@ -44,12 +44,12 @@ public class UICharacter : MonoBehaviour
         if (character1 != null)
         {
             character1.OnHealthChanged += UpdateHealthBar1; // Đăng ký sự kiện mới s1
-            UpdateHealthBar1(character1.status.currentHealth, character1.status.health); // Cập nhật thanh máu ngay lập tức
+            UpdateHealthBar1(character1.status.currentHealth, character1.status.GetMaxHealth()); // Cập nhật thanh máu ngay lập tức
         }
         if (character2 != null)
         {
             character2.OnHealthChanged += UpdateHealthBar2; // Đăng ký sự kiện mới s2
-            UpdateHealthBar2(character2.status.currentHealth, character2.status.health); // Cập nhật thanh máu ngay lập tức
+            UpdateHealthBar2(character2.status.currentHealth, character2.status.GetMaxHealth()); // Cập nhật thanh máu ngay lập tức
         }
     }
 }

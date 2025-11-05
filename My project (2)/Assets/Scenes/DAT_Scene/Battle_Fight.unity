@@ -3091,7 +3091,6 @@ GameObject:
   - component: {fileID: 1124901003}
   - component: {fileID: 1124901002}
   - component: {fileID: 1124901001}
-  - component: {fileID: 1124901005}
   m_Layer: 0
   m_Name: PhotonCheck
   m_TagString: Untagged
@@ -3151,22 +3150,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1124901005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1124901000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcacd55a6b6b9714bb5a1f6c83ecfcf4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  healthBar1: {fileID: 295300567}
-  healthBar2: {fileID: 1499201906}
-  character1: {fileID: 0}
-  character2: {fileID: 0}
 --- !u!1 &1174697019
 GameObject:
   m_ObjectHideFlags: 0
@@ -3391,6 +3374,7 @@ GameObject:
   - component: {fileID: 1273575591}
   - component: {fileID: 1273575590}
   - component: {fileID: 1273575589}
+  - component: {fileID: 1273575592}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -3485,6 +3469,22 @@ Canvas:
   m_SortingLayerID: -1393276637
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1273575592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1273575587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcacd55a6b6b9714bb5a1f6c83ecfcf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthBar1: {fileID: 295300567}
+  healthBar2: {fileID: 1499201906}
+  character1: {fileID: 0}
+  character2: {fileID: 0}
 --- !u!1 &1499201904
 GameObject:
   m_ObjectHideFlags: 0

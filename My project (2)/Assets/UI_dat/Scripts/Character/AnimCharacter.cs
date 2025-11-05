@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class AnimCharacter : MonoBehaviourPun
 {
+
     private Animator animator;
     void Awake()
     {
@@ -15,7 +16,7 @@ public class AnimCharacter : MonoBehaviourPun
     }
     [PunRPC]
     public void PlayMove(bool isMoving)
-    {
+    { 
         animator.SetBool("1_Move", isMoving);
     }
     [PunRPC]

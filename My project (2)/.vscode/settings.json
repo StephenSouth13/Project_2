@@ -66,5 +66,7 @@
     "explorer.fileNesting.patterns": {
         "*.sln": "*.csproj",
     },
-    "dotnet.defaultSolution": "My project (2).sln"
+    "dotnet.defaultSolution": "My project (2).sln",
+    "editor.tabCompletion": "on",
+    "omnisharp.enableAsyncCompletion": true
 }
