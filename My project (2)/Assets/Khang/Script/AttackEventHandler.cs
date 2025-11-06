@@ -47,5 +47,31 @@ public class AttackEventHandler : MonoBehaviour
         {
             playerAttack.SpawnDarkSaber();
         }
-    }    
+    }
+
+    public void CallSpawnShieldVFX()
+    {
+        if (playerAttack != null)
+        {
+            // Gọi hàm thật trên Player 1 (sẽ được tạo ở bước 3)
+            playerAttack.SpawnShieldVFX();
+        }
+    }
+
+    public void CallEnableShieldCollider()
+    {
+        if (playerAttack != null)
+        {
+            playerAttack.EnableShieldCollider();
+        }
+    }
+
+    // HÀM CẦU NỐI MỚI: Tắt Collider khiên
+    public void CallDisableShieldCollider()
+    {
+        if (playerAttack != null)
+        {
+            playerAttack.DisableShieldCollider();
+        }
+    }
 }

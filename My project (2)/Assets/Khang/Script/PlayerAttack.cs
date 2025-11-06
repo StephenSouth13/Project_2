@@ -31,6 +31,14 @@ public class PlayerAttack : MonoBehaviourPun
     public GameObject darkSaberPrefab;
     public Transform darkSaberSpawnPoint;
 
+    [Header("Shield Defense")]
+    public Collider2D shieldCollider; // Collider vật lý của khiên (nếu có)
+    public GameObject shieldVFXPrefab; // Prefab của VFX khiên (Đã có animation)
+    public Transform shieldVFXSpawnPoint; // Vị trí xuất hiện VFX
+
+    // ĐỊNH NGHĨA KEY SFX "đỡ đòn" (Tùy chọn)
+    private const string DEFENSE_SFX_KEY = "Shield_Block";
+
     void Start()
     {
         //anim = GetComponentInChildren<Animator>();
@@ -55,8 +63,13 @@ public class PlayerAttack : MonoBehaviourPun
             Debug.Log("Player DarkSaber Attack Initiated (K)!");
             PerformAttack(2); // GỌI PERFORM ATTACK VỚI INDEX 2
         }
+        else if(Input.GetKeyDown(KeyCode.I))
+        {
+            Debug.Log("Player Defense Initiated (I)");
+            PerformDefense();
+        }    
 
-        float dt = Time.deltaTime;
+            float dt = Time.deltaTime;
         Debug.Log("ABCXYZ" + dt );
         Debug.Log($"ABCXYZ: {dt}");
         
@@ -211,9 +224,61 @@ public class PlayerAttack : MonoBehaviourPun
         {
             DarkSaber.Initialize(direction);
         }
-    }   
+    }  
     
-    
-        
+    void PerformDefense()
+    {
+        nextAttackTime = Time.time + 1f/attackRate;
+        if (characterAnimator != null)
+        {
+            characterAnimator.SetTrigger("Defense");
+        }
+    }
+
+    // TRONG PlayerAttack.cs
+
+    // HÀM GỌI BỞI ANIMATION EVENT
+    public void SpawnShieldVFX()
+    {
+        if (shieldVFXPrefab == null || shieldVFXSpawnPoint == null)
+        {
+            Debug.LogError("Shield VFX Prefab or Spawn Point is missing!");
+            return;
+        }
+
+        // 1. Tạo VFX tại vị trí
+        GameObject vfx = Instantiate(
+            shieldVFXPrefab,
+            shieldVFXSpawnPoint.position,
+            Quaternion.identity, // Giữ nguyên xoay
+            shieldVFXSpawnPoint
+        );
+
+        // 2. Lật VFX theo hướng nhân vật (Rất quan trọng)
+        float direction = Mathf.Sign(transform.localScale.x);
+
+        Vector3 currentVFXScale = vfx.transform.localScale;
+        vfx.transform.localScale = new Vector3(
+            currentVFXScale.x * direction,
+            currentVFXScale.y,
+            currentVFXScale.z
+        );
+
+        // (VFX này phải có script AutoDestroy.cs để tự hủy sau 1-2 giây)
+    }
+
+    // Bạn cũng có thể thêm hàm sau để điều khiển Collider:
+    public void EnableShieldCollider()
+    {
+        if (shieldCollider != null) shieldCollider.enabled = true;
+    }
+
+    public void DisableShieldCollider()
+    {
+        if (shieldCollider != null) shieldCollider.enabled = false;
+    }
+
+
+
 
 }
