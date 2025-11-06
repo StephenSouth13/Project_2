@@ -15,12 +15,10 @@ public class StatusUiSpawner : MonoBehaviour
     int maxSpawn = 10;
     int valueOn;
     int valueOff;
-    void Start()
+
+    public void Init() // chỉnh thêm là gọi 1 lần bằng button get character của button đó và bùm
     {
-        Init();
-    }
-    void Init() // chỉnh thêm là gọi 1 lần bằng button get character của button đó và bùm
-    {
+        if (characterPrefab == null) return;
         CombatCharacter baseStatus = characterPrefab.GetComponent<CombatCharacter>();
         if (IsDame)
         {

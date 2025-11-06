@@ -8,7 +8,7 @@
   - Layers:
     - Default, TransparentFX, Ignore Raycast, Water, UI, Enemy, Ground, Player
 - Active game object:
-  - Name: Speed_img
+  - Name: ButtonSpawnStatus (1)
   - Tag: Untagged
   - Layer: UI
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->
