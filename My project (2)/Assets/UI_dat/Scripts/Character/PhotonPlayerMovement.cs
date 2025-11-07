@@ -63,8 +63,10 @@ public class PhotonPlayerMovement : MonoBehaviourPun
     void CheckGrounded()
     {
         // 1. KIỂM TRA CHẠM ĐẤT
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
-
+        if (groundCheck != null)
+        {
+            isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
+        }
         // Reset số lần nhảy khi chạm đất
         if (isGrounded && !isJump)
         {

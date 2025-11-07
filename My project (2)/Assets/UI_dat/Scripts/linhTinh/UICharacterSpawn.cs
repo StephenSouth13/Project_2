@@ -41,12 +41,36 @@ public class UICharacterSpawn : MonoBehaviour
             s.characterPrefab = prefabCharracter;
             s.Init();
         }
+        Transform cancel_btn = statusInstan.transform.Find("cancel_btn");
+        if (cancel_btn != null)
+        {
+            Button btn = cancel_btn.GetComponent<Button>();
+            btn.onClick.AddListener(ClearChoseCharacter);
+        }
+        Transform select_btn = statusInstan.transform.Find("Select_btn");
+        if(select_btn != null)
+        {
+            Button btn = select_btn.GetComponent<Button>();
+            btn.onClick.AddListener(SelectCharacter);
+        }
     }
     public void ClearAllChill(GameObject container)
     {
-        foreach(Transform chill in container.transform)
+        foreach (Transform chill in container.transform)
         {
             Destroy(chill.gameObject);
         }
+    }
+    public void ClearChoseCharacter()
+    {
+        foreach (Transform chill in spawnPosStatus.transform)
+        {
+            Destroy(chill.gameObject);
+        }
+    }
+    public void SelectCharacter()
+    {
+        PlayerPrefs.SetString("Character", prefabCharracter.name);
+        PlayerPrefs.Save();
     }
 }
