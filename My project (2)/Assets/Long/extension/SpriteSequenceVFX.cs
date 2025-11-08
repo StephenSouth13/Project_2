@@ -1,13 +1,14 @@
 using System.Collections;
 using UnityEngine;
 
+// Gắn vào Prefab "Hiệu ứng nổ" (ImpactVFX)
 [RequireComponent(typeof(SpriteRenderer))]
 public class SpriteSequenceVFX : MonoBehaviour
 {
     public Sprite[] frames;
     public float fps = 24f;
-    public bool loop = false;
-    public bool destroyOnEnd = true;
+    public bool loop = false; // Luôn để là false
+    public bool destroyOnEnd = true; // Luôn để là true
 
     SpriteRenderer sr;
     float frameTime;
@@ -18,13 +19,14 @@ public class SpriteSequenceVFX : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         if (frames == null || frames.Length == 0)
         {
-            Debug.LogWarning("No frames set for SpriteSequenceVFX on " + name);
+            Debug.LogWarning("Không có frames cho VFX on " + name);
             enabled = false;
             return;
         }
         frameTime = 1f / fps;
     }
 
+    // Tự động chạy khi được Instantiate
     void OnEnable()
     {
         idx = 0;
@@ -45,7 +47,8 @@ public class SpriteSequenceVFX : MonoBehaviour
                 }
                 else
                 {
-                    if (destroyOnEnd) Destroy(gameObject);
+                    // Đã chạy hết animation
+                    if (destroyOnEnd) Destroy(gameObject); // Tự hủy
                     yield break;
                 }
             }
