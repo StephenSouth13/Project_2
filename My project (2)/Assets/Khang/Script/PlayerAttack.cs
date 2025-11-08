@@ -36,6 +36,13 @@ public class PlayerAttack : MonoBehaviourPun
     public GameObject shieldVFXPrefab; // Prefab của VFX khiên (Đã có animation)
     public Transform shieldVFXSpawnPoint; // Vị trí xuất hiện VFX
 
+    [Header("Dash Settings")]
+    // Bạn cần gắn script quản lý di chuyển (ví dụ: PlayerMovement) vào đây
+    public MonoBehaviour playerMovementScript;
+    // Nếu bạn muốn đặt cooldown riêng cho Dash:
+    public float dashCooldown = 1f;
+    private float nextDashTime = 0f;
+
     // ĐỊNH NGHĨA KEY SFX "đỡ đòn" (Tùy chọn)
     private const string DEFENSE_SFX_KEY = "Shield_Block";
 
@@ -67,9 +74,14 @@ public class PlayerAttack : MonoBehaviourPun
         {
             Debug.Log("Player Defense Initiated (I)");
             PerformDefense();
-        }    
+        }
+        else if (Input.GetKeyDown(KeyCode.L))
+        {
+            Debug.Log("Player Dash Initiated (L)");
+            PerformDash();
+        }
 
-            float dt = Time.deltaTime;
+        float dt = Time.deltaTime;
         Debug.Log("ABCXYZ" + dt );
         Debug.Log($"ABCXYZ: {dt}");
         
@@ -278,6 +290,19 @@ public class PlayerAttack : MonoBehaviourPun
         if (shieldCollider != null) shieldCollider.enabled = false;
     }
 
+    void PerformDash()
+    {
+        // 1. Đặt Cooldown riêng cho Dash (để không bị spam)
+        nextDashTime = Time.time + dashCooldown;
+
+        // 2. Kích hoạt Animation Dash (Cần Trigger "Dash" trong Animator)
+        if (characterAnimator != null)
+        {
+            characterAnimator.SetTrigger("Dash");
+        }
+
+        
+    }
 
 
 

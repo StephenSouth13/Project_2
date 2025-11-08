@@ -10,7 +10,12 @@ public class PlayerController : MonoBehaviourPun
     public int maxJumps = 2;          // Số lần nhảy tối đa (Nhảy Đôi)
     public bool isJump;
 
-    
+    [Header("Dash Settings")]
+    public float dashForce = 15f; // Lực đẩy Dash (Tùy chọn)
+    public float dashDuration = 0.2f; // Thời gian Dash
+    public float dashCooldown = 1f; // Cooldown Dash
+    private float nextDashTime = 0f;
+    private bool isDashing = false; // Trạng thái đang Dash
 
     // ĐỊNH NGHĨA KEY SFX (Phải khớp với Key trong AudioManager Inspector)
     private const string JUMP_SFX_KEY = "Jump";
@@ -63,9 +68,13 @@ public class PlayerController : MonoBehaviourPun
             jumpsRemaining = maxJumps;
             isJump = true;
         }
-
-        // 2. DI CHUYỂN NGANG
-        MoveHorizontal();
+      
+        // Ngăn chặn di chuyển khi đang Dash
+        if (!isDashing)
+        {
+            // 2. DI CHUYỂN NGANG
+            MoveHorizontal();
+        }
     }
 
     // Cập nhật Input (Update)
@@ -74,6 +83,12 @@ public class PlayerController : MonoBehaviourPun
         // QUAN TRỌNG: Chỉ client sở hữu mới xử lý Input
         if (photonView.IsMine)
         {
+            //Debug.Log("Player đang xử lý Input (IsMine = TRUE)");
+            //HandleInput();
+            //UpdateAnimations();
+            // Chặn Input khi đang Dash (không cho nhảy, di chuyển)
+            if (isDashing) return;
+
             Debug.Log("Player đang xử lý Input (IsMine = TRUE)");
             HandleInput();
             UpdateAnimations();
@@ -90,6 +105,14 @@ public class PlayerController : MonoBehaviourPun
         {
             Debug.Log("Input Nhảy được nhận!");
             Jump();
+        }
+
+        // INPUT TỐC BIẾN (DASH) - NÚT L
+        // =========================================================
+        bool canDash = Time.time >= nextDashTime;
+        if (Input.GetKeyDown(KeyCode.L) && canDash)
+        {
+            PerformDash();
         }
 
         // 4. XOAY CHIỀU SPRITE 
@@ -212,6 +235,48 @@ public class PlayerController : MonoBehaviourPun
         vfx.transform.localScale = transform.localScale; // Đảm bảo VFX cùng hướng với Player
 
 
-    }    
+    }
+
+    private void PerformDash()
+    {
+        // Đặt Cooldown
+        nextDashTime = Time.time + dashCooldown;
+
+        // Kích hoạt Animation Dash (Cần Trigger "Dash" trong Animator)
+        if (anim != null)
+        {
+            anim.SetTrigger("Dash");
+        }
+
+        // Bắt đầu logic Dash (Dùng Coroutine để xử lý thời gian)
+        StartCoroutine(DashCoroutine());
+    }
+
+    private System.Collections.IEnumerator DashCoroutine()
+    {
+        isDashing = true; // Bật trạng thái Dash
+
+        // Lưu lại gravity scale cũ
+        float originalGravity = rb.gravityScale;
+        rb.gravityScale = 0f; // Tắt trọng lực
+        rb.linearVelocity = Vector2.zero;
+
+        // Tính toán hướng Dash
+        float direction = Mathf.Sign(transform.localScale.x); // Lấy hướng hiện tại của nhân vật
+        Vector2 dashDirection = new Vector2(-direction * dashForce, 0f); // Nhân với -direction vì scale X đang là âm khi quay phải
+
+        rb.linearVelocity = dashDirection;
+        Debug.Log($"Dash launched! Velocity: {rb.linearVelocity}");
+
+        // Chờ đợi thời gian Dash
+        yield return new WaitForSeconds(dashDuration);
+
+        // Kết thúc Dash
+        rb.gravityScale = originalGravity; // Khôi phục trọng lực
+        isDashing = false; // Tắt trạng thái Dash
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f); // Đặt vận tốc Y về 0 để tránh va chạm ngay sau Dash
+    }
+
+
 
 }
