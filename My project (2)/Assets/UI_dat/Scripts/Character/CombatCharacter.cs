@@ -6,6 +6,10 @@ public class CombatCharacter : MonoBehaviourPun
 {
     public CharacterStatus status = new CharacterStatus();
     public event System.Action<float, float> OnHealthChanged; // Sự kiện khi máu thay đổi
+
+    int comboStep = 0;
+    float lastClickTime = 0f;
+    float comboResetTime = 1.2f;
     [Header("Components")]
     private AnimCharacter animCharacter;
     void Awake()
@@ -32,24 +36,32 @@ public class CombatCharacter : MonoBehaviourPun
         if (photonView.IsMine == false) return; // Chỉ xử lý nếu đây là nhân vật của người chơi hiện tại
         if (Input.GetKeyDown(KeyCode.J))
         {
+            float timeSceneLastClick = Time.time - lastClickTime;
+            if (timeSceneLastClick > comboResetTime)
+            {
+                comboStep = 0;
+            }
+            lastClickTime = Time.time;
 
-            animCharacter.PlayTriggerAttack();
-            photonView.RPC("PlayTriggerAttack", RpcTarget.Others);
-        }
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            animCharacter.PlayTriggerAttack2();
-            photonView.RPC("PlayTriggerAttack2", RpcTarget.Others);
-        }
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            animCharacter.PlayTriggerAttack3();
-            photonView.RPC("PlayTriggerAttack3", RpcTarget.Others);
-        }
-        if (Input.GetKeyDown(KeyCode.Semicolon))
-        {
-            animCharacter.PlayTriggerAttack4();
-            photonView.RPC("PlayTriggerAttack4", RpcTarget.Others);
+            if (comboStep == 0)
+            {
+                animCharacter.PlayAttack(comboStep);
+                photonView.RPC("PlayAttack", RpcTarget.Others, comboStep);
+                comboStep = 1;
+            }
+            else if (comboStep == 1)
+            {
+                animCharacter.PlayAttack(comboStep);
+                photonView.RPC("PlayAttack", RpcTarget.Others, comboStep);
+                comboStep = 2;
+            }
+            else if (comboStep == 2)
+            {
+                animCharacter.PlayAttack(comboStep);
+                photonView.RPC("PlayAttack", RpcTarget.Others, comboStep);
+                comboStep = 0;
+            }
+            
         }
     }
     [PunRPC]

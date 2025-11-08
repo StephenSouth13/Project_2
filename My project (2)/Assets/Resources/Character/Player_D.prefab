@@ -2734,6 +2734,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 162a4ab930c69ec4ba95a1d3f87f31f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackTriger:
+  - 2_Attack
+  - 2_1_Attack
+  - 2_3_Attack
+  skillTriger: []
 --- !u!114 &6175897122174372489
 MonoBehaviour:
   m_ObjectHideFlags: 0
