@@ -11,8 +11,8 @@ public class PlayerController : MonoBehaviourPun
     public bool isJump;
 
     [Header("Dash Settings")]
-    public float dashForce = 15f; // Lực đẩy Dash (Tùy chọn)
-    public float dashDuration = 0.2f; // Thời gian Dash
+    public float dashForce = 35f; // Lực đẩy Dash (Tùy chọn)
+    public float dashDuration = 0.3f; // Thời gian Dash
     public float dashCooldown = 1f; // Cooldown Dash
     private float nextDashTime = 0f;
     private bool isDashing = false; // Trạng thái đang Dash
