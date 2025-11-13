@@ -8,7 +8,10 @@ public class PlayerSpawner : MonoBehaviourPun
     public GameObject playerPrefab;
     public Transform[] spawnPoints;
     string prefabName;
-
+    void Start()
+    {
+        Invoke("SpawnPLayer",1f);
+    }
     public void SpawnPLayer()
     {
         if (PhotonNetwork.InRoom)

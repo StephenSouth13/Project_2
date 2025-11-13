@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class CombatHitbox : MonoBehaviourPun
 {
+    // hợp tác với EFXManager để spawn tính đame. trước mắt sẽ getdame trước sau đó sẽ truyền zoneSize vào để khớp với Anim
     [Header("Attack State")] // nên để ở CombatCharacter?
     public bool isAttacking = false;
     float attackTimer = 0f; // Tạm thời chưa dùng đến

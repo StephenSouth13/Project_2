@@ -38,13 +38,14 @@ public class CameraZoom : MonoBehaviour
         {
             // Tính khoảng cách giữa hai người chơi
             float distance = Vector3.Distance(player1.position, player2.position);
+            if (Mathf.Abs(distance - cam.orthographicSize) > 1f) // chỉ zoom khi chênh lệch > 1
+            {
+                // Tính toán kích thước camera dựa trên khoảng cách
+                float targetZoom = Mathf.Clamp(distance, zoomOutMin, zoomOutMax);
 
-            // Tính toán kích thước camera dựa trên khoảng cách
-            float targetZoom = Mathf.Clamp(distance, zoomOutMin, zoomOutMax);
-
-            // Mượt mà thay đổi kích thước camera
-            cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, targetZoom, Time.deltaTime * zoomSpeed);
-
+                // Mượt mà thay đổi kích thước camera
+                cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, targetZoom, Time.deltaTime * zoomSpeed);
+            }
             Vector3 midPoint = (player1.position + player2.position) / 2f;
             cam.transform.position = new Vector3(midPoint.x, midPoint.y, cam.transform.position.z);
         }

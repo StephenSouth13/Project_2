@@ -23,6 +23,8 @@ public class PhotonPlayerMovement : MonoBehaviourPun
     private float horizontalInput;
     public int jumpsRemaining; // Số lần nhảy còn lại
 
+    public bool blockGetHorizontal; // khỏa di chi chuyển A - D
+
     void Awake()
     {
         // Lấy thành phần Rigidbody2D và Animator
@@ -77,17 +79,20 @@ public class PhotonPlayerMovement : MonoBehaviourPun
 
     private void MoveHorizontal()
     {
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-
-        Vector2 movement = new Vector2(horizontalInput * runSpeed, rb.linearVelocity.y);
-        rb.linearVelocity = movement;
-        bool isMoving = horizontalInput > 0.05f || horizontalInput < -0.05f;
-        if (PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
+        if (!blockGetHorizontal)
         {
-            photonView.RPC("PlayMove", RpcTarget.Others, isMoving); // Gọi RPC để đồng bộ animation cho các client khác
+            horizontalInput = Input.GetAxisRaw("Horizontal");
+
+            Vector2 movement = new Vector2(horizontalInput * runSpeed, rb.linearVelocity.y);
+            rb.linearVelocity = movement;
+            bool isMoving = horizontalInput > 0.05f || horizontalInput < -0.05f;
+            if (PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
+            {
+                photonView.RPC("PlayMove", RpcTarget.Others, isMoving); // Gọi RPC để đồng bộ animation cho các client khác
+            }
+            animCharacter.PlayMove(isMoving); // local animation
+            FlipSprite();
         }
-        animCharacter.PlayMove(isMoving); // local animation
-        FlipSprite();
     }
 
     private void Jump()

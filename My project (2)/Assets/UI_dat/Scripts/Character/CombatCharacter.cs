@@ -61,7 +61,11 @@ public class CombatCharacter : MonoBehaviourPun
                 photonView.RPC("PlayAttack", RpcTarget.Others, comboStep);
                 comboStep = 0;
             }
-            
+        }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            animCharacter.PlayTriggerDash();
+            photonView.RPC("PlayTriggerDash", RpcTarget.Others);
         }
     }
     [PunRPC]
@@ -95,7 +99,10 @@ public class CombatCharacter : MonoBehaviourPun
     IEnumerator DelayedDestroy(float delay)
     {
         yield return new WaitForSeconds(delay);
-        PhotonNetwork.Destroy(gameObject);
+        if (photonView.IsMine)
+        {
+            PhotonNetwork.Destroy(gameObject);
+        }
     }
     [PunRPC]
     public void SyncHealth(float currentHealth ) // Đồng bộ máu giữa các client

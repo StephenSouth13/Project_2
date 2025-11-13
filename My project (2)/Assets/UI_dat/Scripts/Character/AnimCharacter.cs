@@ -15,6 +15,7 @@ public class AnimCharacter : MonoBehaviourPun
     [PunRPC] public void PlayMove(bool isMoving) {   animator.SetBool("1_Move", isMoving); }
     [PunRPC] public void PlayTrigerDamaged(){ animator.SetTrigger("3_Damaged");}
     [PunRPC] public void PlayTriggerDead() { animator.SetTrigger("4_Death"); }
+    [PunRPC] public void PlayTriggerDash() { animator.SetTrigger("5_Dash"); }
     //=== HẾT CHUNG ===
 
     //=== LOGIC GỌI ANIM RIÊNG ===
