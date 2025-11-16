@@ -1,10 +1,15 @@
 using Photon.Pun;
 using UnityEngine;
-
+using UnityEngine.UI;
+using System.Collections.Generic;
 public class CameraZoom : MonoBehaviour
 {
-    public Transform player1; // Tham chiếu đến Transform của người chơi
-    public Transform player2; // Tham chiếu đến Transform của người chơi thứ hai
+    public Slider[] healthBar;
+    public List<Transform> player = new List<Transform>
+    {
+        null,
+        null
+    }; // Tham chiếu đến Transform của các người chơi
 
     public float zoomOutMin = 5f; // Khoảng cách tối thiểu để bắt đầu zoom out
     public float zoomOutMax = 15f; // Khoảng cách tối đa để zoom out
@@ -12,16 +17,18 @@ public class CameraZoom : MonoBehaviour
     public PolygonCollider2D CameraBounds; // Collider để giới hạn camera
     private Camera cam;
     public static CameraZoom instance;  
+    public float zoomValueY;
     void Awake()
     {
         
         instance = this;
+        cam = Camera.main;
+
         
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        cam = Camera.main;
         TryAssignPlayers();
 
     }
@@ -34,10 +41,10 @@ public class CameraZoom : MonoBehaviour
     }
     void zoom()
     {
-        if (player1 != null && player2 != null)
+        if (player[0] != null && player[1] != null)
         {
             // Tính khoảng cách giữa hai người chơi
-            float distance = Vector3.Distance(player1.position, player2.position);
+            float distance = Vector3.Distance(player[0].position, player[1].position);
             if (Mathf.Abs(distance - cam.orthographicSize) > 1f) // chỉ zoom khi chênh lệch > 1
             {
                 // Tính toán kích thước camera dựa trên khoảng cách
@@ -46,13 +53,22 @@ public class CameraZoom : MonoBehaviour
                 // Mượt mà thay đổi kích thước camera
                 cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, targetZoom, Time.deltaTime * zoomSpeed);
             }
-            Vector3 midPoint = (player1.position + player2.position) / 2f;
-            cam.transform.position = new Vector3(midPoint.x, midPoint.y, cam.transform.position.z);
+            Vector3 midPoint = (player[0].position + player[1].position) / 2f;
+            cam.transform.position = new Vector3(midPoint.x, midPoint.y + zoomValueY, cam.transform.position.z);
+            
         }
         else
         {
             float targetZoom = zoomOutMin;
             cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, targetZoom, Time.deltaTime * zoomSpeed);
+        }
+        if(player[0] == null && player[1] != null)
+        {
+            cam.transform.position = new Vector3(player[1].position.x, player[1].position.y + zoomValueY, cam.transform.position.z);
+        }
+        else if(player[0] != null && player[1] == null)
+        {
+            cam.transform.position = new Vector3(player[0].position.x, player[0].position.y + zoomValueY, cam.transform.position.z);
         }
     }
     void bounds()
@@ -77,32 +93,40 @@ public class CameraZoom : MonoBehaviour
     public void AssignPlayers()
     {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject player in players)
+        foreach (GameObject p in players)
         {
-            PhotonView pv = player.GetComponent<PhotonView>();
+            PhotonView pv = p.GetComponent<PhotonView>();
             if (pv != null)
             {
                 if (pv.Owner.ActorNumber == 1)
                 {
-                    player1 = player.transform;
-                    
+                    player[0] = p.transform;                    
                 }
                 else if (pv.Owner.ActorNumber == 2)
                 {
-                    player2 = player.transform;
+                    player[1] = p.transform;                    
                 }
             }
         }
-        if(player1 != null && player2 != null)
+        if(player[0] != null && player[1] != null)
         {
             CancelInvoke("AssignPlayers"); // Hủy việc gọi lại nếu đã gán được cả hai người chơi
             Debug.Log("Players assigned to CameraZoom.");
-            FindAnyObjectByType<UICharacter>().Setcharacter(player1.GetComponent<CombatCharacter>(), player2.GetComponent<CombatCharacter>());
+            FindAnyObjectByType<UICharacter>().Setcharacter(player[0].GetComponent<CombatCharacter>(), player[1].GetComponent<CombatCharacter>());
+            for(int i = 0 ; i < healthBar.Length; i++) // spawn avt ở thanh máu
+            {
+                GetAVTCharacter getAVT = healthBar[i].GetComponent<GetAVTCharacter>();
+                if(getAVT != null)
+                {
+                    GameObject gameObject = player[i].gameObject;
+                    getAVT.Spawn(gameObject);
+                }
+            }
         }
     }
     void TryAssignPlayers()
     {
-        if (player1 == null || player2 == null)
+        if (player[0] == null || player[1] == null)
         {
             InvokeRepeating("AssignPlayers", 0f, 1f); // Thử gán lại mỗi giây
         }

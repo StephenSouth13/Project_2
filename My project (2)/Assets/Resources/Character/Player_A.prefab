@@ -700,7 +700,7 @@ SortingGroup:
   m_GameObject: {fileID: 1191558606026823056}
   m_Enabled: 1
   m_SortingLayerID: 426979401
-  m_SortingLayer: 4
+  m_SortingLayer: 3
   m_SortingOrder: 5
   m_SortAtRoot: 0
 --- !u!95 &697886551342631309
@@ -4111,6 +4111,7 @@ MonoBehaviour:
   rb: {fileID: 2962203186337064005, guid: 951bf2798a52c09489ee6385532bf457, type: 3}
   animCharacter: {fileID: 4364823952909302038}
   jumpsRemaining: 0
+  blockGetHorizontal: 0
 --- !u!114 &1720584714676405102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4139,6 +4140,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 162a4ab930c69ec4ba95a1d3f87f31f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackTriger: []
+  skillTriger: []
 --- !u!114 &6220542933111666312
 MonoBehaviour:
   m_ObjectHideFlags: 0

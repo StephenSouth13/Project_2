@@ -2626,7 +2626,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 7
 --- !u!114 &3295917435756407944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2643,6 +2643,8 @@ MonoBehaviour:
   jumpForce: 12
   maxJumps: 2
   isJump: 0
+  audioSource: {fileID: 0}
+  jumpSound: {fileID: 0}
   opponentTransform: {fileID: 0}
   canFlipWhileAirborne: 1
   groundCheck: {fileID: 8301688226739895578}
@@ -2715,10 +2717,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   status:
-    health: 100
-    attackPower: 10
-    defense: 5
+    attackDamage: 5
+    strength: 5
+    dexterity: 5
     speed: 5
+    baseHealth: 100
+    baseAttackPower: 10
+    baseDefense: 5
+    baseAttackCooldown: 1
+    baseSpeed: 5
 --- !u!114 &3687462257014306266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2731,6 +2738,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 162a4ab930c69ec4ba95a1d3f87f31f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackTriger: []
+  skillTriger: []
 --- !u!1 &4485206555757303021
 GameObject:
   m_ObjectHideFlags: 0
@@ -4022,7 +4031,7 @@ SortingGroup:
   m_GameObject: {fileID: 7584779994541697307}
   m_Enabled: 1
   m_SortingLayerID: 426979401
-  m_SortingLayer: 4
+  m_SortingLayer: 3
   m_SortingOrder: 5
   m_SortAtRoot: 0
 --- !u!95 &8058036984606842112
