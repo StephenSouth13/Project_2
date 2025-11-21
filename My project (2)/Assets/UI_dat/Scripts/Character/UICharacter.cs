@@ -12,10 +12,15 @@ public class UICharacter : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        Init();
+    }
+    public void Init()
+    {
         healthBar1.value = 1f;
         healthBar2.value = 1f;
+        healthBar1.gameObject.SetActive(false);
+        healthBar1.gameObject.SetActive(false);
     }
-
     // Update is called once per frame
     void UpdateHealthBar1(float currentHealth, float maxHealth)
     {

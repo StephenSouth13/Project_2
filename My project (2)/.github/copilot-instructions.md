@@ -8,7 +8,7 @@
   - Layers:
     - Default, TransparentFX, Ignore Raycast, Water, UI, Enemy, Ground, Player
 - Active game object:
-  - Name: Canvas
+  - Name: GameObject
   - Tag: Untagged
-  - Layer: UI
+  - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

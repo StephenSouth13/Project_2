@@ -17,24 +17,26 @@ public class PhotonPlayerMovement : MonoBehaviourPun
 
     // Thành phần và Trạng thái
     [Header("Components")]
+    public CombatCharacter combatCharacter;
     public Rigidbody2D rb;
     public AnimCharacter animCharacter;
     private bool isGrounded;
     private float horizontalInput;
     public int jumpsRemaining; // Số lần nhảy còn lại
 
-    public bool blockGetHorizontal; // khỏa di chi chuyển A - D
-
+    public bool blockMovement = false; // biến khóa di chuyển
     void Awake()
     {
         // Lấy thành phần Rigidbody2D và Animator
         rb = GetComponent<Rigidbody2D>();
         animCharacter = GetComponent<AnimCharacter>();
+        combatCharacter = GetComponent<CombatCharacter>();
     }
     // Khởi tạo
     void Start()
     {
         jumpsRemaining = maxJumps;
+        runSpeed = combatCharacter.status.GetMoveSpeed();
     }
 
     // Cập nhật Vật lý (FixedUpdate)
@@ -79,20 +81,18 @@ public class PhotonPlayerMovement : MonoBehaviourPun
 
     private void MoveHorizontal()
     {
-        if (!blockGetHorizontal)
-        {
-            horizontalInput = Input.GetAxisRaw("Horizontal");
+        if (blockMovement) return; // Nếu bị khóa di chuyển thì không làm gì cả
+        horizontalInput = Input.GetAxisRaw("Horizontal");
 
-            Vector2 movement = new Vector2(horizontalInput * runSpeed, rb.linearVelocity.y);
-            rb.linearVelocity = movement;
-            bool isMoving = horizontalInput > 0.05f || horizontalInput < -0.05f;
-            if (PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
-            {
-                photonView.RPC("PlayMove", RpcTarget.Others, isMoving); // Gọi RPC để đồng bộ animation cho các client khác
-            }
-            animCharacter.PlayMove(isMoving); // local animation
-            FlipSprite();
+        Vector2 movement = new Vector2(horizontalInput * runSpeed, rb.linearVelocity.y);
+        rb.linearVelocity = movement;
+        bool isMoving = horizontalInput > 0.05f || horizontalInput < -0.05f;
+        if (PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
+        {
+            photonView.RPC("PlayMove", RpcTarget.Others, isMoving); // Gọi RPC để đồng bộ animation cho các client khác
         }
+        animCharacter.PlayMove(isMoving); // local animation
+        FlipSprite();
     }
 
     private void Jump()

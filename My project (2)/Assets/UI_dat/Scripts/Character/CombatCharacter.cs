@@ -12,6 +12,10 @@ public class CombatCharacter : MonoBehaviourPun
     float comboResetTime = 1.2f;
     [Header("Components")]
     private AnimCharacter animCharacter;
+    [Header("Combat Settings")]
+    public float attackSpeed = 1.0f; // số lần đánh mỗi giây 1:0 là mặt định - sẽ lấy atack speed từ CharacterStatus
+    private float attackCooldown = 0f; // thời gian chờ giữa các lần đánh
+
     void Awake()
     {
         status.Init(); // Khởi tạo trạng thái nhân vật
@@ -21,6 +25,7 @@ public class CombatCharacter : MonoBehaviourPun
     }
     void Start()
     {
+        attackSpeed = status.GetDexterity();
     }
     void Update()
     {
@@ -29,12 +34,17 @@ public class CombatCharacter : MonoBehaviourPun
     }
     void ControllPlayer()
     {
+        
         if (status.IsDead())
         {
             return; // Nếu đã chết thì không làm gì cả
         }
+        if (attackCooldown > 0f)
+        {
+            attackCooldown -= Time.deltaTime;
+        }
         if (photonView.IsMine == false) return; // Chỉ xử lý nếu đây là nhân vật của người chơi hiện tại
-        if (Input.GetKeyDown(KeyCode.J))
+        if (Input.GetKeyDown(KeyCode.J) && attackCooldown <= 0f)
         {
             float timeSceneLastClick = Time.time - lastClickTime;
             if (timeSceneLastClick > comboResetTime)
@@ -61,9 +71,13 @@ public class CombatCharacter : MonoBehaviourPun
                 photonView.RPC("PlayAttack", RpcTarget.Others, comboStep);
                 comboStep = 0;
             }
+            attackCooldown = status.GetAttackCooldown();   
         }
         if (Input.GetKeyDown(KeyCode.L))
         {
+            
+
+
             animCharacter.PlayTriggerDash();
             photonView.RPC("PlayTriggerDash", RpcTarget.Others);
         }
@@ -76,7 +90,7 @@ public class CombatCharacter : MonoBehaviourPun
             Debug.Log("ViewID không khớp, không nhận sát thương");
             return;
         } 
-        Debug.Log("Character took " + damage + " damage.");
+        
         photonView.RPC("PlayTrigerDamaged", RpcTarget.Others); // Đồng bộ hoạt ảnh bị thương cho các client khác
         animCharacter.PlayTrigerDamaged();
         status.TakeDamage(damage);
@@ -90,18 +104,22 @@ public class CombatCharacter : MonoBehaviourPun
     void Die()
     {
         Debug.Log("Character has died.");
-
+        Time.timeScale = 0.2f; // làm chậm thời gian khi chết
+        CameraZoom.instance.ShowKOPanel(true); // Hiển thị bảng KO
         photonView.RPC("PlayTriggerDead", RpcTarget.Others); // Đồng bộ hoạt ảnh chết cho các client khác
         animCharacter.PlayTriggerDead();
-        StartCoroutine(DelayedDestroy(1f)); // Chờ 1 giây trước khi hủy đối tượng
 
+        StartCoroutine(DieSequence());
     }
-    IEnumerator DelayedDestroy(float delay)
+    IEnumerator DieSequence()
     {
-        yield return new WaitForSeconds(delay);
+        // chờ 2 giây realtime trước khi destroy
+        yield return new WaitForSecondsRealtime(2f);
+
         if (photonView.IsMine)
-        {
+        {   
             PhotonNetwork.Destroy(gameObject);
+            GameEndManager.instance.photonView.RPC("SetGlobalTimeScale", RpcTarget.All, 0f);
         }
     }
     [PunRPC]
@@ -110,4 +128,5 @@ public class CombatCharacter : MonoBehaviourPun
         status.SetCurrentHealth(currentHealth);
         OnHealthChanged?.Invoke(status.currentHealth, status.GetMaxHealth());
     }
+    
 }

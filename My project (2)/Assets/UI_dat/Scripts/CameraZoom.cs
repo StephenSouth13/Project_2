@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 public class CameraZoom : MonoBehaviour
 {
+    public GameObject KOpanel;
     public Slider[] healthBar;
     public List<Transform> player = new List<Transform>
     {
@@ -100,11 +101,13 @@ public class CameraZoom : MonoBehaviour
             {
                 if (pv.Owner.ActorNumber == 1)
                 {
-                    player[0] = p.transform;                    
+                    player[0] = p.transform;
+                    healthBar[0].gameObject.SetActive(true);                    
                 }
                 else if (pv.Owner.ActorNumber == 2)
                 {
-                    player[1] = p.transform;                    
+                    player[1] = p.transform;      
+                    healthBar[1].gameObject.SetActive(true);              
                 }
             }
         }
@@ -130,5 +133,9 @@ public class CameraZoom : MonoBehaviour
         {
             InvokeRepeating("AssignPlayers", 0f, 1f); // Thử gán lại mỗi giây
         }
+    }
+    public void ShowKOPanel(bool show)
+    {
+        KOpanel.SetActive(show);
     }
 }

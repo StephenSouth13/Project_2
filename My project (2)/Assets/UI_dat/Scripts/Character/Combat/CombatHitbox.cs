@@ -8,8 +8,6 @@ public class CombatHitbox : MonoBehaviourPun
     // hợp tác với EFXManager để spawn tính đame. trước mắt sẽ getdame trước sau đó sẽ truyền zoneSize vào để khớp với Anim
     [Header("Attack State")] // nên để ở CombatCharacter?
     public bool isAttacking = false;
-    float attackTimer = 0f; // Tạm thời chưa dùng đến
-    float attackCooldown = 1f; // Tạm thời chưa dùng đến
     [Header("Attack Point")]
 
     public Transform attackPoint;
@@ -67,6 +65,7 @@ public class CombatHitbox : MonoBehaviourPun
     public void DetectInRange()
     {
         if(pv.IsMine == false) return; // Chỉ xử lý nếu đây là nhân vật của người chơi hiện tại
+        if(attackPoint == null) return; 
         overlapBuffer = Physics2D.OverlapBoxAll(attackPoint.position, zoneSize, angle ,targetLayers);
         int count = overlapBuffer.Length;
         for (int i = 0; i < count; i++)

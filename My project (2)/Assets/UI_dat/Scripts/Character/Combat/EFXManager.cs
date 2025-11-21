@@ -20,13 +20,11 @@ public class EFXManager : MonoBehaviourPun
             anim.SetTrigger(animKey);
         }
     }
-    [PunRPC]
     public void SpawnEFX(string objName, string key, Vector3 pos)
     {
-        movement.blockGetHorizontal = true;
+        
         GameObject ObjSpawn = Instantiate(Resources.Load<GameObject>(objName), pos, Quaternion.identity);
         RectTransform parent = GetComponentInParent<RectTransform>();
-        Debug.Log("x = " + parent.localScale.x);
         if (parent.localScale.x > 0)
         {
             ObjSpawn.transform.localScale = new Vector3(3f, 3f, 1f);

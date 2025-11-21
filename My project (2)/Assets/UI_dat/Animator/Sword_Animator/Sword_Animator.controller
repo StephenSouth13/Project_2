@@ -15,8 +15,8 @@ AnimatorStateTransition:
   m_IsExit: 0
   serializedVersion: 3
   m_TransitionDuration: 0
-  m_TransitionOffset: 0
-  m_ExitTime: 0.9970413
+  m_TransitionOffset: 0.03144662
+  m_ExitTime: 1.0466939
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -31,7 +31,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: 2_1_Attack
+    m_ConditionEvent: J_normal2
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -7570136782447670578}
@@ -62,8 +62,8 @@ AnimatorStateTransition:
   m_IsExit: 0
   serializedVersion: 3
   m_TransitionDuration: 0
-  m_TransitionOffset: 0
-  m_ExitTime: 0.9854472
+  m_TransitionOffset: 0.046121646
+  m_ExitTime: 1.0315689
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -191,7 +191,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: 2_2_Attack
+    m_ConditionEvent: J_normal3
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -2706333585460135801}
@@ -327,8 +327,8 @@ AnimatorStateTransition:
   m_IsExit: 0
   serializedVersion: 3
   m_TransitionDuration: 0
-  m_TransitionOffset: 0
-  m_ExitTime: 0.9996954
+  m_TransitionOffset: 0.024598205
+  m_ExitTime: 1.052406
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -349,8 +349,8 @@ AnimatorStateTransition:
   m_IsExit: 0
   serializedVersion: 3
   m_TransitionDuration: 0
-  m_TransitionOffset: 0
-  m_ExitTime: 1.0021844
+  m_TransitionOffset: 0.03270439
+  m_ExitTime: 1.048905
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -447,9 +447,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.25
+  m_TransitionDuration: 0
   m_TransitionOffset: 0
-  m_ExitTime: 0.39999998
+  m_ExitTime: 1.0007163
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -470,7 +470,7 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: 2_Attack
+  - m_Name: J_normal1
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -494,13 +494,13 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 1
     m_Controller: {fileID: 9100000}
-  - m_Name: 2_1_Attack
+  - m_Name: J_normal2
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: 2_2_Attack
+  - m_Name: J_normal3
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -718,7 +718,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: 2_Attack
+    m_ConditionEvent: J_normal1
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 5875028870357242239}

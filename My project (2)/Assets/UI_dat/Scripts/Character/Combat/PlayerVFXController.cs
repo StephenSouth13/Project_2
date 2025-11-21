@@ -16,30 +16,28 @@ public class PlayerVFXController : MonoBehaviourPun
         rb = GetComponentInParent<Rigidbody2D>();
     }
 
-    public void PlayDash()
+    public void PlayDash() 
     {
         if (PhotonNetwork.InRoom)
         {
             if (PhotonNetwork.IsConnectedAndReady)
             {
-                SetFreeze(false, true, true); // lock y và x 
                 string prefabName = "EFX/" + prefabEFX.name;
                 eFXManager.SpawnEFX(prefabName, "Dash", dashPos.position);
-                pv.RPC("SpawnEFX", RpcTarget.Others, prefabName, "Dash", dashPos.position);
                 Debug.Log("Spawn OK");
                 
             }
         }
     }
-
-
-
-    public void setPosAfterDash()
+    public void setBlockMovement() // khóa di chuyển // thêm event ở đầu anim
     {
-        RectTransform parent = GetComponentInParent<RectTransform>();
-        parent.position = transform.position;
+        SetFreeze(true, true, true);
+    }
+    public void setBack() // trả lại trạng thái ban đầu // thêm event ở cuối anim 
+    {
+
+        SetFreeze(false, true, true);
         SetFreeze(false, false, true);
-        movement.blockGetHorizontal = false;
     }
     public void SetFreeze(bool freezeX, bool freezeY, bool freezeRotation)
     {
@@ -50,6 +48,8 @@ public class PlayerVFXController : MonoBehaviourPun
         if (freezeRotation) constraints |= RigidbodyConstraints2D.FreezeRotation;
 
         rb.constraints = constraints;
+        rb.gravityScale = freezeY ? 0f : 4f;
+        
     }
 
 }
