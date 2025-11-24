@@ -10,21 +10,24 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
     public GameObject playerPrefab;
     public Transform[] spawnPoints;
     string prefabName;
-    
+    public static PlayerSpawner instance;
+    private void Awake()
+    {
+        instance = this;
+    }
     void Start()
     {
     }
-    public override void OnJoinedRoom()
-    {
-        SpawnPLayer();
-    }
-    public void SpawnPLayer()
+
+    public void SpawnPLayer(int spawnIndex) // gọi từ OnJoinedRoom và GameEndManager
     {
         if (PhotonNetwork.InRoom)
         {
+            
             if (PhotonNetwork.IsConnectedAndReady && playerPrefab != null && spawnPoints.Length > 0)
             {
-                int spawnIndex = PhotonNetwork.LocalPlayer.ActorNumber % spawnPoints.Length; // Chọn điểm spawn dựa trên ActorNumber
+        
+
                 Debug.Log("[SpawnPLayer] Spawning player at index: " + spawnIndex);
                 string characterName = PlayerPrefs.GetString("Character");
                 if (!string.IsNullOrEmpty(characterName)) // Khi đã lưu lựa chọn character
@@ -39,6 +42,7 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
                     {
                         getAVT.Spawn(player);
                     }
+                    FindAnyObjectByType<UICharacter>().SetSingleCharacter(player.GetComponent<CombatCharacter>(), spawnIndex);
                     player.name = "Player_" + PhotonNetwork.LocalPlayer.ActorNumber; // Đặt tên cho player dựa trên ActorNumber
                     Debug.Log("[SpawnPLayer] Player spawned with name: " + player.name);
 
@@ -54,13 +58,7 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
                     Debug.Log("[SpawnPLayer] Player spawned with name: " + player.name);
 
                 }
-                   
-
             }
-        }
-        else
-        {
-            Debug.LogWarning("⚠️ [SpawnPLayer] Cannot spawn player because not in a room.");
         }
     }
 }

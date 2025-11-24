@@ -113,13 +113,13 @@ public class CombatCharacter : MonoBehaviourPun
     }
     IEnumerator DieSequence()
     {
-        // chờ 2 giây realtime trước khi destroy
-        yield return new WaitForSecondsRealtime(2f);
+        // chờ 4 giây realtime trước khi destroy
+        yield return new WaitForSecondsRealtime(4f);
 
         if (photonView.IsMine)
         {   
             PhotonNetwork.Destroy(gameObject);
-            GameEndManager.instance.photonView.RPC("SetGlobalTimeScale", RpcTarget.All, 0f);
+            GameEndManager.instance.photonView.RPC("SetGlobalTimeScale", RpcTarget.All, 1f);
         }
     }
     [PunRPC]

@@ -3406,10 +3406,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   status:
-    attackDamage: 10
+    attackDamage: 6
     strength: 7
-    dexterity: 10
-    speed: 10
+    dexterity: 5
+    speed: 4
   attackSpeed: 1
 --- !u!114 &-6804326253392190330
 MonoBehaviour:

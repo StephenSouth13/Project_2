@@ -38,11 +38,13 @@ public class UICharacter : MonoBehaviour
     }
     public void Setcharacter(CombatCharacter c1, CombatCharacter c2)
     {
-        if (character1 != null || character2 != null)
+        if (character1 != null)
         {
-            character1.OnHealthChanged -= UpdateHealthBar1; // Hủy đăng ký sự kiện cũ s1
-            character2.OnHealthChanged -= UpdateHealthBar2; // Hủy đăng ký sự kiện cũ s2
-
+            character1.OnHealthChanged -= UpdateHealthBar1;
+        }
+        if (character2 != null)
+        {
+            character2.OnHealthChanged -= UpdateHealthBar2;
         }
         character1 = c1;
         character2 = c2;
@@ -57,4 +59,42 @@ public class UICharacter : MonoBehaviour
             UpdateHealthBar2(character2.status.currentHealth, character2.status.GetMaxHealth()); // Cập nhật thanh máu ngay lập tức
         }
     }
+    public void SetSingleCharacter(CombatCharacter c, int index)
+    {
+        Debug.Log("[UICharacter] Setting single character at index: " + index);
+        // Hủy đăng ký cũ nếu có
+        if (index == 0 && character1 != null)
+        {
+            character1.OnHealthChanged -= UpdateHealthBar1;
+        }
+        else if (index == 1 && character2 != null)
+        {
+            character2.OnHealthChanged -= UpdateHealthBar2;
+        }
+
+        // Gán nhân vật mới
+        if (index == 0)
+        {
+            character1 = c;
+            if (character1 != null)
+            {
+                character1.OnHealthChanged += UpdateHealthBar1;
+                UpdateHealthBar1(character1.status.currentHealth, character1.status.GetMaxHealth());
+                healthBar1.gameObject.SetActive(true);
+                healthBar1.value = 1f;
+            }
+        }
+        else if (index == 1)
+        {
+            character2 = c;
+            if (character2 != null)
+            {
+                character2.OnHealthChanged += UpdateHealthBar2;
+                UpdateHealthBar2(character2.status.currentHealth, character2.status.GetMaxHealth());
+                healthBar2.gameObject.SetActive(true);
+                healthBar2.value = 1f;
+            }
+        }
+    }
+
 }

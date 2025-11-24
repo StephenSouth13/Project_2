@@ -15,7 +15,6 @@ public class GetAVTCharacter : MonoBehaviourPun
         Transform child = clone.transform.Find("UnitRoot/Root/BodySet/P_Body/HeadSet");
         if(child != null)
         {
-            Debug.Log("đã tìm thấy ");
             GameObject head = Instantiate(child.gameObject,SpawnPos.position, Quaternion.identity,SpawnPos.transform);
             head.transform.localScale = scaleAVT;
             SortingGroup sortingGB = head.AddComponent<SortingGroup>();

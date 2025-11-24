@@ -2,6 +2,7 @@ using Photon.Pun;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Collections;
 public class CameraZoom : MonoBehaviour
 {
     public GameObject KOpanel;
@@ -30,8 +31,7 @@ public class CameraZoom : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        TryAssignPlayers();
-
+        StartCoroutine(TryAssignPlayersCoroutine());
     }
 
     // Update is called once per frame
@@ -91,29 +91,33 @@ public class CameraZoom : MonoBehaviour
             cam.transform.position = new Vector3(clampedX, clampedY, camPos.z);
         }
     }
-    public void AssignPlayers()
+    public void AssignPlayers() // đăng ký 1 lần ở đầu game
     {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject p in players)
+        GameObject[] playersInScene = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject p in playersInScene)
         {
             PhotonView pv = p.GetComponent<PhotonView>();
-            if (pv != null)
+            if(pv != null && pv.Owner != null)
             {
-                if (pv.Owner.ActorNumber == 1)
+                if (pv.Owner.CustomProperties.ContainsKey("spawnIndex"))
                 {
-                    player[0] = p.transform;
-                    healthBar[0].gameObject.SetActive(true);                    
+                    int index = (int)pv.Owner.CustomProperties["spawnIndex"];
+                    Debug.Log("[AssignPlayers] Assigning player with spawnIndex: " + index);
+                    if (index >= 0 && index < player.Count)
+                    {
+                        Debug.Log("[AssignPlayers] player.count " + player.Count);
+                        player[index] = p.transform;
+                        healthBar[index].gameObject.SetActive(true);
+                    }
                 }
-                else if (pv.Owner.ActorNumber == 2)
+                else
                 {
-                    player[1] = p.transform;      
-                    healthBar[1].gameObject.SetActive(true);              
+                    Debug.LogWarning("⚠️ [AssignPlayers] Player " + p.name + " không có spawnIndex trong CustomProperties.");
                 }
             }
         }
-        if(player[0] != null && player[1] != null)
+        if(player[0] != null && player[1] != null) // dùng để gán và spawn đủ avt của 2 người chơi
         {
-            CancelInvoke("AssignPlayers"); // Hủy việc gọi lại nếu đã gán được cả hai người chơi
             Debug.Log("Players assigned to CameraZoom.");
             FindAnyObjectByType<UICharacter>().Setcharacter(player[0].GetComponent<CombatCharacter>(), player[1].GetComponent<CombatCharacter>());
             for(int i = 0 ; i < healthBar.Length; i++) // spawn avt ở thanh máu
@@ -127,13 +131,15 @@ public class CameraZoom : MonoBehaviour
             }
         }
     }
-    void TryAssignPlayers()
+    IEnumerator TryAssignPlayersCoroutine()
     {
-        if (player[0] == null || player[1] == null)
+        while (player[0] == null || player[1] == null)
         {
-            InvokeRepeating("AssignPlayers", 0f, 1f); // Thử gán lại mỗi giây
+            AssignPlayers();
+            yield return new WaitForSeconds(1f);
         }
     }
+
     public void ShowKOPanel(bool show)
     {
         KOpanel.SetActive(show);

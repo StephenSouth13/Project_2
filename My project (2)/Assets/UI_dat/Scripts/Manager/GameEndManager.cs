@@ -1,6 +1,6 @@
 using UnityEngine;
 using Photon.Pun;
-public class GameEndManager : MonoBehaviourPun
+public class GameEndManager : MonoBehaviourPunCallbacks
 {
     public static GameEndManager instance;
 
@@ -27,6 +27,23 @@ public class GameEndManager : MonoBehaviourPun
         }
         Time.timeScale = scale;
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
+    }
+    public void Spawn1Player()
+    {
+        if (PhotonNetwork.InRoom)
+        {
+            int spawnIndex = PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("spawnIndex") ?
+                             (int)PhotonNetwork.LocalPlayer.CustomProperties["spawnIndex"] : 0;
+            Debug.Log("[Spawn1Player] Respawning player at index: " + spawnIndex);
+            PlayerSpawner.instance.SpawnPLayer(spawnIndex);
+            photonView.RPC("ResetInit", RpcTarget.All, spawnIndex);
+        }
+    }
+    [PunRPC]
+    public void ResetInit(int spawnIndex)
+    {
+        CameraZoom.instance.AssignPlayers(); // Gán lại người chơi cho CameraZoom
+        CameraZoom.instance.ShowKOPanel(false); // Ẩn bảng KO
     }
 }
 

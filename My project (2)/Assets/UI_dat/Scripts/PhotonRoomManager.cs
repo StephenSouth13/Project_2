@@ -35,7 +35,8 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
             IsOpen = true
         };
         PhotonNetwork.CreateRoom(roomName, roomOptions); // Tạo phòng với tên và tùy chọn đã định nghĩa
-        SceneManager.LoadSceneAsync("Battle_Fight"); // Load scene Battle_Fight khi tạo phòng
+        SceneManager.LoadSceneAsync("Battle_Fight");
+        
     }
     public void joinRoom() // Hàm sẽ được sử dụng cho button "Join Room" // Tham gia phòng ngẫu nhiên
     {
@@ -139,9 +140,26 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Debug.Log("✅ [OnJoinedRoom] Đã vào phòng: " + PhotonNetwork.CurrentRoom.Name);
+
+        int index = GetFreeSpawnIndex();
+        ExitGames.Client.Photon.Hashtable customProperties = new ExitGames.Client.Photon.Hashtable();
+        customProperties["spawnIndex"] = index;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(customProperties);
+
+        if(PlayerSpawner.instance != null)
+        {
+            Debug.Log("✅ [OnJoinedRoom] Gọi SpawnPLayer từ PlayerSpawner.");
+            PlayerSpawner.instance.SpawnPLayer(index);
+        }
+        else
+        {
+            Debug.LogError("❌ [OnJoinedRoom] PlayerSpawner.instance là null. Không thể gọi SpawnPLayer.");
+        }
+
+        Debug.Log("✅ [OnJoinedRoom] Gán spawnIndex = " + index + " cho LocalPlayer");
         if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
         {
-        
+           
             Debug.Log("✅ [OnJoinedRoom] Phòng đầy. Bắt đầu trò chơi!");
             // logic Bắt đầu trò chơi
             PhotonNetwork.CurrentRoom.IsOpen = false; // Đóng phòng để không ai khác có thể tham gia
@@ -162,9 +180,10 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
     }
     public override void OnCreatedRoom()
     {
-        Debug.Log("✅ [OnCreatedRoom] Phòng được tạo: " + PhotonNetwork.CurrentRoom.Name);
-        // thêm load scene chờ người chơi khác vào đây
+       
+
     }
+
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
         Debug.LogError("❌ [OnCreateRoomFailed] Không thể tạo phòng: " + message);
@@ -178,5 +197,28 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
             list[i] = list[randomIndex];
             list[randomIndex] = temp;
         }
+    }
+    int GetFreeSpawnIndex() // Hàm tìm chỉ số spawn trống cho người chơi mới
+    {
+        Debug.Log("[GetFreeSpawnIndex] Tìm chỉ số spawn trống...");
+        HashSet<int> usedIndices = new HashSet<int>(); // Tập hợp chỉ số đã được sử dụng
+        foreach (Player player in PhotonNetwork.PlayerList) // Duyệt qua tất cả người chơi trong phòng và thu thập chỉ số đã sử dụng
+        {
+            if (player.CustomProperties.ContainsKey("spawnIndex"))
+            {
+                Debug.Log("[GetFreeSpawnIndex] Đã sử dụng spawnIndex: " + (int)player.CustomProperties["spawnIndex"]);
+                usedIndices.Add((int)player.CustomProperties["spawnIndex"]);
+            }
+        }
+        for (int i = 0; i < PhotonNetwork.CurrentRoom.MaxPlayers; i++) // Tìm chỉ số trống đầu tiên
+        {
+            if (!usedIndices.Contains(i))
+            {
+                Debug.Log("[GetFreeSpawnIndex] Chỉ số spawn trống tìm thấy: " + i);
+                return i;
+            }
+        }
+        Debug.LogWarning("⚠️ [GetFreeSpawnIndex] Không tìm thấy chỉ số spawn trống.");
+        return -1; // Nếu không còn chỉ số trống
     }
 }
