@@ -45,5 +45,17 @@ public class GameEndManager : MonoBehaviourPunCallbacks
         CameraZoom.instance.AssignPlayers(); // Gán lại người chơi cho CameraZoom
         CameraZoom.instance.ShowKOPanel(false); // Ẩn bảng KO
     }
+    public void GetCustomerProperties()
+    {
+        if (PhotonNetwork.InRoom)
+        {
+            int spawnIndex = PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("spawnIndex") ?
+                             (int)PhotonNetwork.LocalPlayer.CustomProperties["spawnIndex"] : 0;
+            int liveCount = PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("liveCount") ?
+                             (int)PhotonNetwork.LocalPlayer.CustomProperties["liveCount"] : 0;
+            Debug.Log("[GetCustomerProperties] Current spawnIndex: " + spawnIndex);
+            Debug.Log("[GetCustomerProperties] Current liveCount: " + liveCount);
+        }
+    }
 }
 

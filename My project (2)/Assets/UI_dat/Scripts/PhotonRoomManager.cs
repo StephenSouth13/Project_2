@@ -144,6 +144,7 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
         int index = GetFreeSpawnIndex();
         ExitGames.Client.Photon.Hashtable customProperties = new ExitGames.Client.Photon.Hashtable();
         customProperties["spawnIndex"] = index;
+        customProperties["liveCount"] = 2;
         PhotonNetwork.LocalPlayer.SetCustomProperties(customProperties);
 
         if(PlayerSpawner.instance != null)

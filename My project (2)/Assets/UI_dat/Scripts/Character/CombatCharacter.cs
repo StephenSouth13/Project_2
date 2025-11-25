@@ -1,7 +1,7 @@
 using System.Collections;
 using Photon.Pun;
 using UnityEngine;
-
+using Photon.Realtime;
 public class CombatCharacter : MonoBehaviourPun
 {
     public CharacterStatus status = new CharacterStatus();
@@ -108,20 +108,38 @@ public class CombatCharacter : MonoBehaviourPun
         CameraZoom.instance.ShowKOPanel(true); // Hiển thị bảng KO
         photonView.RPC("PlayTriggerDead", RpcTarget.Others); // Đồng bộ hoạt ảnh chết cho các client khác
         animCharacter.PlayTriggerDead();
-
+        SetLiveCount();
         StartCoroutine(DieSequence());
     }
     IEnumerator DieSequence()
     {
         // chờ 4 giây realtime trước khi destroy
-        yield return new WaitForSecondsRealtime(4f);
+        yield return new WaitForSecondsRealtime(4.5f);
 
         if (photonView.IsMine)
         {   
             PhotonNetwork.Destroy(gameObject);
+            
             GameEndManager.instance.photonView.RPC("SetGlobalTimeScale", RpcTarget.All, 1f);
+
         }
     }
+    public void SetLiveCount()
+    {
+        if(PhotonNetwork.InRoom)
+        {
+            Player owner = photonView.Owner;    
+            if(owner != null && owner.CustomProperties.ContainsKey("liveCount"))
+            {
+                int liveCount = (int)owner.CustomProperties["liveCount"];
+                int liveCountNew = Mathf.Max(liveCount - 1, 0);
+                ExitGames.Client.Photon.Hashtable customProperties = new ExitGames.Client.Photon.Hashtable();
+                customProperties["liveCount"] = liveCountNew;
+                PhotonNetwork.LocalPlayer.SetCustomProperties(customProperties);
+                Debug.Log("[SetLiveCount] Cập nhật liveCount mới: " + liveCountNew);
+            }
+        }
+    }    
     [PunRPC]
     public void SyncHealth(float currentHealth ) // Đồng bộ máu giữa các client
     {

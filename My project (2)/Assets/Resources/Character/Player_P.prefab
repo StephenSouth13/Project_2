@@ -1051,10 +1051,11 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 256
+  combatCharacter: {fileID: 0}
   rb: {fileID: 2962203186337064005, guid: 951bf2798a52c09489ee6385532bf457, type: 3}
   animCharacter: {fileID: 4364823952909302038, guid: a0d6bc25e9b4e344a8b4eea3f3fe2a26, type: 3}
   jumpsRemaining: 0
-  blockGetHorizontal: 0
+  blockMovement: 0
 --- !u!114 &2774463892810114590
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1102,11 +1103,7 @@ MonoBehaviour:
     strength: 7
     dexterity: 5
     speed: 5
-    baseHealth: 100
-    baseAttackPower: 10
-    baseDefense: 5
-    baseAttackCooldown: 1
-    baseSpeed: 5
+  attackSpeed: 1
 --- !u!114 &6749270835876280133
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -41,18 +41,26 @@ public class UICharacterSpawn : MonoBehaviour
             s.characterPrefab = prefabCharracter;
             s.Init();
         }
-        Transform cancel_btn = statusInstan.transform.Find("cancel_btn");
-        if (cancel_btn != null)
+        Transform conTainer_btns = statusInstan.transform.Find("Container_btns");
+        if (conTainer_btns != null)
         {
-            Button btn = cancel_btn.GetComponent<Button>();
-            btn.onClick.AddListener(ClearChoseCharacter);
+            Debug.Log("Found Container_btns");
+            Transform cancel_btn = conTainer_btns.transform.Find("cancel_btn");
+            if (cancel_btn != null)
+            {   
+                Debug.Log("Found cancel_btn");
+                Button btn = cancel_btn.GetComponent<Button>();
+                btn.onClick.AddListener(ClearChoseCharacter);
+            }
+            Transform select_btn = conTainer_btns.transform.Find("select_btn");
+            if(select_btn != null)
+            {
+                Debug.Log("Found Select_btn");
+                Button btn = select_btn.GetComponent<Button>();
+                btn.onClick.AddListener(SelectCharacter);
+            }
         }
-        Transform select_btn = statusInstan.transform.Find("Select_btn");
-        if(select_btn != null)
-        {
-            Button btn = select_btn.GetComponent<Button>();
-            btn.onClick.AddListener(SelectCharacter);
-        }
+        
     }
     public void ClearAllChill(GameObject container)
     {
@@ -70,6 +78,7 @@ public class UICharacterSpawn : MonoBehaviour
     }
     public void SelectCharacter()
     {
+        Debug.Log("Selected Character: " + prefabCharracter.name);
         PlayerPrefs.SetString("Character", prefabCharracter.name);
         PlayerPrefs.Save();
     }
