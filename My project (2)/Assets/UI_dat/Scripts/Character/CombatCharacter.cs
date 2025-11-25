@@ -126,7 +126,7 @@ public class CombatCharacter : MonoBehaviourPun
     }
     public void SetLiveCount()
     {
-        if(PhotonNetwork.InRoom)
+        if(PhotonNetwork.InRoom && photonView.IsMine)
         {
             Player owner = photonView.Owner;    
             if(owner != null && owner.CustomProperties.ContainsKey("liveCount"))
