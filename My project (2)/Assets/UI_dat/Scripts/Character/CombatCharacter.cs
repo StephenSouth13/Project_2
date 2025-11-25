@@ -110,6 +110,7 @@ public class CombatCharacter : MonoBehaviourPun
         animCharacter.PlayTriggerDead();
         SetLiveCount();
         StartCoroutine(DieSequence());
+
     }
     IEnumerator DieSequence()
     {
@@ -121,8 +122,9 @@ public class CombatCharacter : MonoBehaviourPun
             PhotonNetwork.Destroy(gameObject);
             
             GameEndManager.instance.photonView.RPC("SetGlobalTimeScale", RpcTarget.All, 1f);
-
+            GameEndManager.instance.StartCoroutine("DelaySpawn1Player", 0.5f);
         }
+        
     }
     public void SetLiveCount()
     {
@@ -140,6 +142,7 @@ public class CombatCharacter : MonoBehaviourPun
             }
         }
     }    
+
     [PunRPC]
     public void SyncHealth(float currentHealth ) // Đồng bộ máu giữa các client
     {

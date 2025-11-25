@@ -1,5 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
+using System.Collections;
+using Photon.Realtime;
 public class GameEndManager : MonoBehaviourPunCallbacks
 {
     public static GameEndManager instance;
@@ -27,6 +29,7 @@ public class GameEndManager : MonoBehaviourPunCallbacks
         }
         Time.timeScale = scale;
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
+        
     }
     public void Spawn1Player()
     {
@@ -56,6 +59,31 @@ public class GameEndManager : MonoBehaviourPunCallbacks
             Debug.Log("[GetCustomerProperties] Current spawnIndex: " + spawnIndex);
             Debug.Log("[GetCustomerProperties] Current liveCount: " + liveCount);
         }
+    }
+    IEnumerator DelaySpawn1Player(float delay) // chỉ player đã chết mới chạy hàm này
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        int liveCount = GetLiveCount();
+        if(liveCount > 0)
+        {
+            Spawn1Player();
+        }
+        else
+        {
+            Debug.Log("[DieSequence] Không còn mạng , xử lý logic end Game.");
+        }
+
+    }
+    public int GetLiveCount()
+    {
+        if (PhotonNetwork.InRoom)
+        {
+            int liveCount = PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("liveCount") ?
+                             (int)PhotonNetwork.LocalPlayer.CustomProperties["liveCount"] : 0;
+            Debug.Log("[GetLiveCount] Current liveCount: " + liveCount);
+            return liveCount;
+        }
+        return 0;
     }
 }
 
