@@ -12,7 +12,8 @@ public class UIElementMover  :  MonoBehaviour, ISelectHandler, IDeselectHandler 
     public Image image;
     public Vector2 targetPos;
     public bool isPressed = false;
-    // [SerializeField] bool isOver = false; // Vẫn chưa dùng đến logic này nhưng tạm thời giữ lại để sau này có thể phát triển thêm
+    public Outline outline;
+    [SerializeField] bool isOver = false; // Vẫn chưa dùng đến logic này nhưng tạm thời giữ lại để sau này có thể phát triển thêm
     Vector2 startPos;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -55,13 +56,19 @@ public class UIElementMover  :  MonoBehaviour, ISelectHandler, IDeselectHandler 
     }
     public void OnPointerEnter(PointerEventData eventData) // khi lia chuột vào khu vực button sẽ chạy
     {
-        // isOver = true;
-        // Debug.Log("enter");
+        isOver = true;
+        if(outline != null)
+        {
+            outline.enabled = true;
+        }
     }
     public void OnPointerExit(PointerEventData eventData) // khi rời chuột khỏi khu vực button sẽ chạy
     {
-        // isOver = false;
-        // Debug.Log("exit");
+        isOver = false;
+        if(outline != null)
+        {
+            outline.enabled = false;
+        }
     }
     public void OnPointerDown(PointerEventData evenData) // khi nhấn chuột vào khu vực button sẽ chạy
     {
@@ -74,6 +81,11 @@ public class UIElementMover  :  MonoBehaviour, ISelectHandler, IDeselectHandler 
         isPressed = false;
         moveText(isPressed);
         // Debug.Log("up");
+        // dừng focus khi thả chuột ra ngoài button
+        if (!isOver)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
     public void OnSelect(BaseEventData eventData) // Gọi 1 lần duy nhất khi được chọn (focus)
     {
