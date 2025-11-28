@@ -16,7 +16,7 @@ public class RoomItemSetup : MonoBehaviourPunCallbacks
     public Button joinRoom_Btn;
 
     RoomInfo roomInfo;
-
+    bool isJoining = false;
     public void SetupRoomItem(RoomInfo roomInfo)
     {
         this.roomInfo = roomInfo;
@@ -33,16 +33,28 @@ public class RoomItemSetup : MonoBehaviourPunCallbacks
             IconLock_Img.gameObject.SetActive(true);
             IconUnlock_Img.gameObject.SetActive(false);
             playerCount_Txt.text = "Full";
+            this.playerCount_Txt.color = Color.red;
+
         }
         joinRoom_Btn.onClick.RemoveAllListeners();
         joinRoom_Btn.onClick.AddListener(JoinRoom);
     }
     public void JoinRoom()
     {
+        if(isJoining) return; // tránh double click
+        if(this.playerCount_Txt.text == "Full")
+        {
+            return;
+        }
+
+        isJoining = true; 
         string selectedRoomName = this.roomName;
+
         if (selectedRoomName != null)
         {
-            PhotonRoomManager.instance.joinSpecificRoom(selectedRoomName);
+            VideoSceneController.instance.SetEnabledRawImage(true);
+            VideoSceneController.instance.SendRoomName(selectedRoomName);
+            VideoSceneController.instance.SendBoolCreateJoin(false, true);
         }
     }
     public override void OnRoomListUpdate(List<RoomInfo> roomList)

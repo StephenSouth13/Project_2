@@ -2,7 +2,10 @@ using NUnit.Framework.Constraints;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Video;
+
 public class UIElementMover  :  MonoBehaviour, ISelectHandler, IDeselectHandler , IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 
 {
@@ -75,6 +78,7 @@ public class UIElementMover  :  MonoBehaviour, ISelectHandler, IDeselectHandler 
         isPressed = true;
         moveText(isPressed);
         // Debug.Log("down");
+        
     }
     public void OnPointerUp(PointerEventData eventData) // khi thả chuột ra khỏi khu vực button sẽ chạy
     {

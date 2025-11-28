@@ -2,12 +2,26 @@ using UnityEngine;
 using Photon.Pun;
 using System.Collections;
 using Photon.Realtime;
+using UnityEngine.UI;
 public class GameEndManager : MonoBehaviourPunCallbacks
 {
+    public GameObject panelEnd;
+    public Button rematchBtn;
+    public Button homeBtn;
     public static GameEndManager instance;
 
     void Awake() => instance = this;
-
+    void Start()
+    {
+        rematchBtn.onClick.AddListener(() =>
+        {
+            RequestRematch();
+        });
+        homeBtn.onClick.AddListener(() =>
+        {
+            BackToHome();
+        });
+    }
     [PunRPC]
     public void SetGlobalTimeScale(float scale)
     {
@@ -45,10 +59,12 @@ public class GameEndManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void ResetInit(int spawnIndex)
     {
+        Time.timeScale = 1f; // Đặt lại timeScale về 1 phòng khi rematch
+        Time.fixedDeltaTime = 0.02f; // Đặt lại fixedDeltaTime về mặc định phòng khi rematch
         CameraZoom.instance.AssignPlayers(); // Gán lại người chơi cho CameraZoom
         CameraZoom.instance.ShowKOPanel(false); // Ẩn bảng KO
     }
-    public void GetCustomerProperties()
+    public void GetCustomerProperties() // chỉ để debug lấy thông tin lưu trữ trong custom properties
     {
         if (PhotonNetwork.InRoom)
         {
@@ -71,8 +87,18 @@ public class GameEndManager : MonoBehaviourPunCallbacks
         else
         {
             Debug.Log("[DieSequence] Không còn mạng , xử lý logic end Game.");
+            photonView.RPC("SysncDieSystem", RpcTarget.Others);
+            panelEnd.SetActive(true);
+            RematchManager.instance.SetRoomState(RoomState.PostMatch);
+
         }
 
+    }
+    [PunRPC]
+    public void SysncDieSystem()
+    {
+        panelEnd.SetActive(true);
+        RematchManager.instance.SetRoomState(RoomState.PostMatch);
     }
     public int GetLiveCount()
     {
@@ -84,6 +110,19 @@ public class GameEndManager : MonoBehaviourPunCallbacks
             return liveCount;
         }
         return 0;
+    }
+    public void BackToHome() // Gọi khi nhấn nút về menu chính
+    {
+        RematchManager.instance.photonView.RPC("SetRoomState", RpcTarget.Others); // sysnc trạng thái phòng cho người khác
+        Time.timeScale = 1f; // Đặt lại timeScale về 1 khi về menu chính
+        Time.fixedDeltaTime = 0.02f; // Đặt lại fixedDeltaTime về mặc định
+        PhotonNetwork.LeaveRoom();
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Main_game");
+    }
+    public void RequestRematch() // Gọi khi nhấn nút rematch
+    {
+        photonView.RPC("SetGlobalTimeScale", RpcTarget.All, 1f);
+        RematchManager.instance.RequestRematch();
     }
 }
 

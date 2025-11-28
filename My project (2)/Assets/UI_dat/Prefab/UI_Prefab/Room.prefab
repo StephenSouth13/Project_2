@@ -547,6 +547,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1307908784521257259, guid: beeb49a81229d97438151dc04f2cac02, type: 3}
+      propertyPath: outline
+      value: 
+      objectReference: {fileID: 5807591958962804605}
+    - target: {fileID: 1307908784521257259, guid: beeb49a81229d97438151dc04f2cac02, type: 3}
+      propertyPath: videoJoin
+      value: 
+      objectReference: {fileID: 5926694577186010521, guid: 57093d58ffd28ae46b7007eb1fd21d05, type: 3}
+    - target: {fileID: 1307908784521257259, guid: beeb49a81229d97438151dc04f2cac02, type: 3}
       propertyPath: targetPos.y
       value: -10
       objectReference: {fileID: 0}
@@ -709,8 +717,31 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1757132957091509976, guid: beeb49a81229d97438151dc04f2cac02, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5807591958962804605}
   m_SourcePrefab: {fileID: 100100000, guid: beeb49a81229d97438151dc04f2cac02, type: 3}
+--- !u!1 &1004047049175582703 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1757132957091509976, guid: beeb49a81229d97438151dc04f2cac02, type: 3}
+  m_PrefabInstance: {fileID: 1553038621373755703}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5807591958962804605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1004047049175582703}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 1, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 5, y: 5}
+  m_UseGraphicAlpha: 1
 --- !u!224 &2478581027474837119 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4028522824382086984, guid: beeb49a81229d97438151dc04f2cac02, type: 3}

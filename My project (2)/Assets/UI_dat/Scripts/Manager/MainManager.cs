@@ -30,8 +30,8 @@ public class MainManager : MonoBehaviourPunCallbacks
     }
     public void CreateRoom()
     {
-
-        PhotonRoomManager.instance.createRoom();
+        VideoSceneController.instance.SetEnabledRawImage(true);
+        VideoSceneController.instance.SendBoolCreateJoin(true, false);
     }
 
     public void ExitGame()

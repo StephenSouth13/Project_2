@@ -61,6 +61,11 @@ MonoBehaviour:
   - setBlockMovement
   - SetGlobalTimeScale
   - ResetInit
+  - SysncDieSystem
+  - SetRoomState
+  - ShowRematchPanel
+  - SynceIntentAndShow
+  - SynceRoomStateChange
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

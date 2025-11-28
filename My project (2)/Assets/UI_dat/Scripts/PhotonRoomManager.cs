@@ -20,7 +20,8 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
         }
     }
     [SerializeField] public List<RoomInfo> availableRooms = new List<RoomInfo>(); // Danh sách phòng hiện có
-    public void createRoom() // Tạo phòng mới với tên duy nhất
+
+    public void createRoom() 
     {
         int indexRoom = 1; // Bắt đầu từ Room_1
         string roomName = "Room_" + indexRoom; // Tên phòng mặc định
@@ -35,7 +36,6 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
             IsOpen = true
         };
         PhotonNetwork.CreateRoom(roomName, roomOptions); // Tạo phòng với tên và tùy chọn đã định nghĩa
-        SceneManager.LoadSceneAsync("Battle_Fight");
         
     }
     public void joinRoom() // Hàm sẽ được sử dụng cho button "Join Room" // Tham gia phòng ngẫu nhiên
@@ -54,7 +54,6 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
         {
             if (room.PlayerCount < room.MaxPlayers)
             {
-                SceneManager.LoadSceneAsync("Battle_Fight"); // Load scene Battle_Fight khi tham gia phòng
                 PhotonNetwork.JoinRoom(room.Name);
 
                 return;
@@ -71,7 +70,6 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
         if (targetRoom != null && targetRoom.PlayerCount < targetRoom.MaxPlayers)
         {
             
-            SceneManager.LoadSceneAsync("Battle_Fight"); // Load scene Battle_Fight khi tham gia phòng
             PhotonNetwork.JoinRoom(roomName);
             Debug.Log("✅ [joinSpecificRoom] Tham gia phòng: " + roomName);
         }
