@@ -127,7 +127,7 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
                 PhotonNetwork.CurrentRoom.IsOpen = true; // Mở lại phòng nếu có người rời
             }
             // Thêm logic xử lý Quay lại scene chờ. thoát khởi scene game.
-
+            RematchManager.instance.SynceIntentAndShow(0);
             
         }
         else

@@ -8,7 +8,7 @@
   - Layers:
     - Default, TransparentFX, Ignore Raycast, Water, UI, Enemy, Ground, Player
 - Active game object:
-  - Name: Accept_btn
-  - Tag: Untagged
-  - Layer: UI
+  - Name: Main Camera (1)
+  - Tag: MainCamera
+  - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

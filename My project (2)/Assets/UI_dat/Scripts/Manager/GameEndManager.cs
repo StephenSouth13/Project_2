@@ -113,11 +113,9 @@ public class GameEndManager : MonoBehaviourPunCallbacks
     }
     public void BackToHome() // Gọi khi nhấn nút về menu chính
     {
-        RematchManager.instance.photonView.RPC("SetRoomState", RpcTarget.Others); // sysnc trạng thái phòng cho người khác
         Time.timeScale = 1f; // Đặt lại timeScale về 1 khi về menu chính
         Time.fixedDeltaTime = 0.02f; // Đặt lại fixedDeltaTime về mặc định
-        PhotonNetwork.LeaveRoom();
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Main_game");
+        PhotonRoomManager.instance.leaveRoom();
     }
     public void RequestRematch() // Gọi khi nhấn nút rematch
     {

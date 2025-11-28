@@ -42,7 +42,7 @@ public class RoomItemSetup : MonoBehaviourPunCallbacks
     public void JoinRoom()
     {
         if(isJoining) return; // tránh double click
-        if(this.playerCount_Txt.text == "Full")
+        if(this.playerCount_Txt.text == "Full" || this.playerCount_Txt.text =="0/0")
         {
             return;
         }

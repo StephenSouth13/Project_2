@@ -3308,6 +3308,7 @@ GameObject:
   - component: {fileID: 764994543}
   - component: {fileID: 764994545}
   - component: {fileID: 764994544}
+  - component: {fileID: 764994546}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -3433,6 +3434,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 764994542}
   m_CullTransparentMesh: 1
+--- !u!114 &764994546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 764994542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76a92a8efcb564a4eb34dabd9c3f2130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetText: {fileID: 0}
+  fullContent: 
+  charDelay: 0.05
+  useUnScaleTime: 1
+  ellipsisInterval: 0.5
+  maxDots: 3
+  showEllipsisAfterTyping: 1
 --- !u!1 &873947375
 GameObject:
   m_ObjectHideFlags: 0
@@ -4558,7 +4578,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef441768925f2704eafd70fd9d187274, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  statusText: {fileID: 764994544}
+  statusText: {fileID: 764994542}
   rematchPanel: {fileID: 620760189}
   accept_btn: {fileID: 1665320867}
   decline_btn: {fileID: 1598449217}

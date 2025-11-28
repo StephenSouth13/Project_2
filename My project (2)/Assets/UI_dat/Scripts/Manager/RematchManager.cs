@@ -3,10 +3,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum RematchEventCode : byte { RequestRematch = 1, ReceiveRequest = 2 , AcceptRematch = 3, DecLineRematch = 4}
-public enum RoomState { InGame, PostMatch , ReceiveMatch, RematchPending, RematchAccepted, RematchDeclined, ReturningToLobby}
+public enum RematchEventCode : byte {leftRoom = 0, RequestRematch = 1, ReceiveRequest = 2 , AcceptRematch = 3, DecLineRematch = 4 , BackToLobby = 5}
+public enum RoomState { InGame, PostMatch, opponentLeftRoom , ReceiveMatch, RematchPending, RematchAccepted, RematchDeclined, ReturningToLobby}
 public class RematchManager : MonoBehaviourPun
-{
+{ 
     public GameObject statusText; 
     public GameObject rematchPanel;
     public Button accept_btn;
@@ -22,10 +22,15 @@ public class RematchManager : MonoBehaviourPun
             GetPlayerIntent();
             GetRoomState();
             Debug.Log("đã gọi");
+            SynceIntentAndShow(3);
+            photonView.RPC("SynceIntentAndShow", RpcTarget.Others, 3);
+
         });
         decline_btn.onClick.AddListener(() =>
         {
-            
+            SynceIntentAndShow(5);
+            photonView.RPC("SynceIntentAndShow",RpcTarget.Others,4);
+
         });
 
     }
@@ -39,13 +44,13 @@ public class RematchManager : MonoBehaviourPun
 
     }
     [PunRPC]
-    public void SynceIntentAndShow(int b)
+    public void SynceIntentAndShow(int b) 
     {
         byte intent = (byte)b;
         SetPlayerIntent(intent);
     }
     
-    [PunRPC]
+    
     public void SetRoomState(RoomState newState)
     {
         ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable();
@@ -88,11 +93,18 @@ public class RematchManager : MonoBehaviourPun
         
         switch (b)
         {
+            case 0:
+                Debug.Log("[RematchManager] Hiển thị panel rematch thông báo cho người chơi là đối thủ đã rời đi .");
+                ShowObject(false);
+                SetRoomState(RoomState.opponentLeftRoom);
+
+                break;
             case 1:
                 Debug.Log("[RematchManager] Hiển thị panel rematch cho chính người chơi gửi yêu cầu - chờ đợi .");
                 SetRoomState(RoomState.RematchPending);
                 ShowObject(false);
                 // chời nhận lại trạng thái từ người chơi
+                // sẽ tự set type 3 hoặc 4 tương tự khi oponent gửi SynceIntentAndShow qua để tự set local 3 - 4
                 break;
             case 2:
                 Debug.Log("[RematchManager] Hiển thị panel rematch cho người nhận để xem sét");
@@ -108,7 +120,8 @@ public class RematchManager : MonoBehaviourPun
                 ShowObject(false);
 
                 // Chờ 1 logic để bên local và bên khác cùng nhận 1 chỉ thị rematch game
-
+                // khi người chơi nhấn accept thì sẽ tự set local byte = 3 và SynceIntentAndShow cho oponent để họ vào byte = 3
+                // logic để reMatch ván game
                 break;
             case 4:
                 Debug.Log("[RematchManager] người chơi đã từ chối rematch.");
@@ -116,7 +129,12 @@ public class RematchManager : MonoBehaviourPun
                 ShowObject(false);
                 // gửi text thông báo bên còn lại
 
-                // khi này người chơi sẽ synce RoomState ReturningToLobby cho người khác để họ nhận và tự vào chế độ đó
+                // khi này người chơi sẽ nhận thông báo từ chối và chuẩn bị RoomState.ReturningToLobby
+
+                break;
+            case 5:
+                SetRoomState(RoomState.ReturningToLobby);
+                ShowObject(false);
 
                 break;
             default:
@@ -131,38 +149,58 @@ public class RematchManager : MonoBehaviourPun
     }
     public void OnRoomStateChanged(RoomState newState) // tự thay đổi và set bên khác RoomState
     {
+        
         TypingWithEllipsisUI type = statusText.GetComponent<TypingWithEllipsisUI>();
         if(type == null) 
         {
             Debug.Log("[OnRoomStateChanged] type == null"); 
             return;
         }
+        type.ResetAll();
         //RoomState chỉ cần bắt sự kiện và viết text hiển thị coroutine;
         //Sau khi hết coroutine thì sẽ có hàm tiếp ứng 
         switch (newState)
         {
+            case RoomState.opponentLeftRoom:
+
+                
+                fullText = "Opponent left the room";
+                type.SetTimeRead(5);
+                type.SetTimeCountDown(5);
+                type.StartTyping(fullText);
+
+            
+                
+            
+            
+                break;
             case RoomState.RematchPending:
                 fullText = "Waiting for opponent is rematch";
-                type.StartTyping(fullText);
+                type.SetTimeCountDown(15);
+                type.StartTyping(fullText); // bắt đầu countDown 10s
                 // khi hết thời gian
                 // tự set vào RoomState.ReturningToLobby
 
                 break;
             case RoomState.ReceiveMatch:
                 fullText = "Opponent invites a rematch. Accept?";
-                type.StartTyping(fullText);
+                type.SetTimeCountDown(15);
+                type.StartTyping(fullText); // bắt đầu countDown 10s
 
                 // khi hết thời gian
                 // tự set vào RoomState.ReturningToLobby
                 break;
             case RoomState.RematchAccepted:
                 fullText = "Rematch confirmed! Starting in";
+                type.SetTimeCountDown(10);
                 type.StartTyping(fullText);
                 
                 break;
             case RoomState.RematchDeclined:
                 fullText = "Opponent declined. Returning to lobby.";
-                type.StartTyping(fullText);
+                type.SetTimeCountDown(5);
+
+                type.StartTyping(fullText);// bắt đầu countDown 3s
                 
                 // ở đây người chơi nhận Synce từ người từ chối và tiến vào đây 
 
@@ -171,17 +209,19 @@ public class RematchManager : MonoBehaviourPun
                 // khi hết thời gian
                 // tự set vào RoomState.ReturningToLobby
                 break;
+            
             case RoomState.ReturningToLobby:
-                fullText = "Quay lại Lobby...";
+                fullText = "No response. Returning to lobby";
+                type.SetTimeCountDown(7);
                 type.StartTyping(fullText);
 
                 // khi hết thời gian
                 // LoadScene và leaveRoom - JoinLobby
                 break;
             default:
-                fullText = "";
-                type.StartTyping(fullText);
-
+                fullText = "BUG";
+                //No response. Returning to lobby.
+                //Left: “Opponent left the room
                 break;
         }
     }
