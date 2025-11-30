@@ -195,6 +195,7 @@ public class RematchManager : MonoBehaviourPun
                 type.SetTimeCountDown(10);
                 type.StartTyping(fullText);
                 
+
                 break;
             case RoomState.RematchDeclined:
                 fullText = "Opponent declined. Returning to lobby.";
@@ -212,7 +213,7 @@ public class RematchManager : MonoBehaviourPun
             
             case RoomState.ReturningToLobby:
                 fullText = "No response. Returning to lobby";
-                type.SetTimeCountDown(7);
+                type.SetTimeCountDown(3);
                 type.StartTyping(fullText);
 
                 // khi hết thời gian

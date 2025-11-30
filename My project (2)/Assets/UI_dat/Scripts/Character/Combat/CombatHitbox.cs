@@ -49,6 +49,11 @@ public class CombatHitbox : MonoBehaviourPun
     public void StartAttack()
     {
         if (!pv.IsMine) return; // Chỉ máy sở hữu mới xử lý
+        if(GameEndManager.instance.IsKoTime == true)
+        {
+            Debug.Log("[StartAttack] đang trong thời gian KO");
+            return;
+        }
         Debug.Log("Start Attack");
         isAttacking = true;
         alreadyHitTargets.Clear(); // Xóa danh sách mục tiêu đã bị đánh trúng trước đó
@@ -61,7 +66,10 @@ public class CombatHitbox : MonoBehaviourPun
         isAttacking = false;
         alreadyHitTargets.Clear(); // Xóa danh sách mục tiêu đã bị đánh trúng trước đó
     }
-
+    public void EndSkill()
+    {
+        combatCharacter.isUsingSkill = false;
+    }
     public void DetectInRange()
     {
         if(pv.IsMine == false) return; // Chỉ xử lý nếu đây là nhân vật của người chơi hiện tại

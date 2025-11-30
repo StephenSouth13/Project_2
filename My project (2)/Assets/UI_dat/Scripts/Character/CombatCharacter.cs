@@ -4,6 +4,7 @@ using UnityEngine;
 using Photon.Realtime;
 public class CombatCharacter : MonoBehaviourPun
 {
+   
     public CharacterStatus status = new CharacterStatus();
     public event System.Action<float, float> OnHealthChanged; // Sự kiện khi máu thay đổi
 
@@ -15,6 +16,7 @@ public class CombatCharacter : MonoBehaviourPun
     [Header("Combat Settings")]
     public float attackSpeed = 1.0f; // số lần đánh mỗi giây 1:0 là mặt định - sẽ lấy atack speed từ CharacterStatus
     private float attackCooldown = 0f; // thời gian chờ giữa các lần đánh
+    public bool isUsingSkill = false;
 
     void Awake()
     {
@@ -73,6 +75,7 @@ public class CombatCharacter : MonoBehaviourPun
             }
             attackCooldown = status.GetAttackCooldown();   
         }
+        UseSkill();
         if (Input.GetKeyDown(KeyCode.L))
         {
             
@@ -82,6 +85,36 @@ public class CombatCharacter : MonoBehaviourPun
             photonView.RPC("PlayTriggerDash", RpcTarget.Others);
         }
     }
+    public void UseSkill()
+    {
+        if(isUsingSkill) return;
+        if(Input.GetKeyDown(KeyCode.W))
+        {
+            if (Input.GetKeyDown(KeyCode.K))
+            {
+                isUsingSkill = true;
+                animCharacter.PlaySkill(0);
+                photonView.RPC("PlaySkill", RpcTarget.Others, 0);
+            }
+        }
+        else if(Input.GetKeyDown(KeyCode.S))
+        {
+            if (Input.GetKeyDown(KeyCode.K))
+            {
+                isUsingSkill = true;
+                animCharacter.PlaySkill(1);
+                photonView.RPC("PlaySkill", RpcTarget.Others, 1);
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.K))
+        {
+            isUsingSkill = true;
+            animCharacter.PlaySkill(2);
+            photonView.RPC("PlaySkill", RpcTarget.Others, 2);
+        }
+        
+    }
+
     [PunRPC]
     public void TakeDamage(int viewId,float damage)
     {
@@ -103,6 +136,8 @@ public class CombatCharacter : MonoBehaviourPun
     }
     void Die()
     {
+        GameEndManager.instance.photonView.RPC("SetBoolKOTime", RpcTarget.All, true);
+        
         Debug.Log("Character has died.");
         Time.timeScale = 0.2f; // làm chậm thời gian khi chết
         CameraZoom.instance.ShowKOPanel(true); // Hiển thị bảng KO

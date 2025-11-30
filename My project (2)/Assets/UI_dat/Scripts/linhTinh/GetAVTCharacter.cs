@@ -11,7 +11,7 @@ public class GetAVTCharacter : MonoBehaviourPun
     }
     public void Spawn(GameObject clone)
     {
-        DestroyChildren(SpawnPos.gameObject);
+        DestroyAvt();
         Transform child = clone.transform.Find("UnitRoot/Root/BodySet/P_Body/HeadSet");
         if(child != null)
         {
@@ -26,6 +26,12 @@ public class GetAVTCharacter : MonoBehaviourPun
                 pHead.transform.localRotation = Quaternion.identity;
             }
         }
+    }
+    public void DestroyAvt()
+    {
+        
+        DestroyChildren(SpawnPos.gameObject);
+        Debug.Log("Đã destroy avt tại spawnPos : " + SpawnPos.gameObject.name);
     }
     void DestroyChildren(GameObject parent)
     {

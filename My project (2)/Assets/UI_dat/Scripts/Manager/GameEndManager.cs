@@ -8,6 +8,8 @@ public class GameEndManager : MonoBehaviourPunCallbacks
     public GameObject panelEnd;
     public Button rematchBtn;
     public Button homeBtn;
+
+    public bool IsKoTime = false;
     public static GameEndManager instance;
 
     void Awake() => instance = this;
@@ -59,6 +61,7 @@ public class GameEndManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void ResetInit(int spawnIndex)
     {
+        IsKoTime = false;
         Time.timeScale = 1f; // Đặt lại timeScale về 1 phòng khi rematch
         Time.fixedDeltaTime = 0.02f; // Đặt lại fixedDeltaTime về mặc định phòng khi rematch
         CameraZoom.instance.AssignPlayers(); // Gán lại người chơi cho CameraZoom
@@ -87,16 +90,22 @@ public class GameEndManager : MonoBehaviourPunCallbacks
         else
         {
             Debug.Log("[DieSequence] Không còn mạng , xử lý logic end Game.");
-            photonView.RPC("SysncDieSystem", RpcTarget.Others);
-            panelEnd.SetActive(true);
-            RematchManager.instance.SetRoomState(RoomState.PostMatch);
+            photonView.RPC("SysncDieSystem", RpcTarget.All);
+            
 
         }
 
     }
     [PunRPC]
+    public void SetBoolKOTime(bool t)
+    {
+        IsKoTime = t; 
+        Debug.Log("[SetBoolKOTime] : IsKOTime : " + IsKoTime);
+    }
+    [PunRPC]
     public void SysncDieSystem()
     {
+        PlayerSpawner.instance.DestroyAllAvt();
         panelEnd.SetActive(true);
         RematchManager.instance.SetRoomState(RoomState.PostMatch);
     }

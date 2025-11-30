@@ -61,4 +61,13 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
             }
         }
     }
+    public void DestroyAllAvt()
+    {
+        foreach(Slider slider in healbar_slider)
+        {
+            GetAVTCharacter getAVT = slider.GetComponent<GetAVTCharacter>();
+            if(getAVT == null ) continue;
+            getAVT.DestroyAvt();
+        }
+    }
 }
