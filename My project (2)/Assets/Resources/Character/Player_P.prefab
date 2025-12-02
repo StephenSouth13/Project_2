@@ -1098,12 +1098,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a9700090c576554a80edda04c5100b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isWPressed: 0
+  isSPressed: 0
+  isADPressed: 1
   status:
     attackDamage: 8
     strength: 7
     dexterity: 5
     speed: 5
   attackSpeed: 1
+  isUsingSkill: 0
 --- !u!114 &6749270835876280133
 MonoBehaviour:
   m_ObjectHideFlags: 0

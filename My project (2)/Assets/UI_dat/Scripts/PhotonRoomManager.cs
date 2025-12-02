@@ -86,6 +86,7 @@ public class PhotonRoomManager : MonoBehaviourPunCallbacks
             PhotonNetwork.LeaveRoom();
             Debug.Log("✅ [leaveRoom] Đã rời phòng.");
             SceneManager.LoadSceneAsync("Main_game"); // Quay lại scene Lobby khi rời phòng
+            AudioManager.instance.PlayIndexSoundEFX(0);
 
         }
         else

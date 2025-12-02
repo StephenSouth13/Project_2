@@ -20,15 +20,19 @@ public class VideoSceneController : MonoBehaviour
 
     void OnVideoFinished(VideoPlayer vp)
     {
+
         // Chuyển scene khi video kết thúc
         SceneManager.LoadScene(nextSceneName);
         if(isJoinRoom)
         {
             PhotonRoomManager.instance.joinSpecificRoom(roomName); // Tham gia phòng sau khi chuyển scene
+            AudioManager.instance.PlayIndexMusic(1);
         }
         if(isCreateRoom)
         {
             PhotonRoomManager.instance.createRoom(); // Tạo phòng sau khi chuyển scene
+            AudioManager.instance.PlayIndexMusic(1);
+
         }
 
     }

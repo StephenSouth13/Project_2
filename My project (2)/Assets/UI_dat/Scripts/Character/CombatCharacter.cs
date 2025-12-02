@@ -2,9 +2,15 @@ using System.Collections;
 using Photon.Pun;
 using UnityEngine;
 using Photon.Realtime;
+using System.Collections.Generic;
+using Unity.Mathematics;
+
 public class CombatCharacter : MonoBehaviourPun
 {
-   
+    public GameObject hitEFX_Prefab;
+    public bool isWPressed = false;
+    public bool isSPressed = false;
+    public bool isADPressed = true;
     public CharacterStatus status = new CharacterStatus();
     public event System.Action<float, float> OnHealthChanged; // Sự kiện khi máu thay đổi
 
@@ -13,6 +19,7 @@ public class CombatCharacter : MonoBehaviourPun
     float comboResetTime = 1.2f;
     [Header("Components")]
     private AnimCharacter animCharacter;
+    private CombatHitbox combatHitbox;
     [Header("Combat Settings")]
     public float attackSpeed = 1.0f; // số lần đánh mỗi giây 1:0 là mặt định - sẽ lấy atack speed từ CharacterStatus
     private float attackCooldown = 0f; // thời gian chờ giữa các lần đánh
@@ -22,6 +29,7 @@ public class CombatCharacter : MonoBehaviourPun
     {
         status.Init(); // Khởi tạo trạng thái nhân vật
         animCharacter = GetComponent<AnimCharacter>();
+        combatHitbox = GetComponentInChildren<CombatHitbox>();
         OnHealthChanged?.Invoke(status.currentHealth, status.GetMaxHealth()); // Khởi tạo thanh máu
 
     }
@@ -45,6 +53,11 @@ public class CombatCharacter : MonoBehaviourPun
         {
             attackCooldown -= Time.deltaTime;
         }
+        if(combatHitbox == null)
+        {
+            Debug.Log("chưa gắn combathitbox ở childrend");
+            return;
+        }
         if (photonView.IsMine == false) return; // Chỉ xử lý nếu đây là nhân vật của người chơi hiện tại
         if (Input.GetKeyDown(KeyCode.J) && attackCooldown <= 0f)
         {
@@ -57,18 +70,21 @@ public class CombatCharacter : MonoBehaviourPun
 
             if (comboStep == 0)
             {
+                setDame(0);
                 animCharacter.PlayAttack(comboStep);
                 photonView.RPC("PlayAttack", RpcTarget.Others, comboStep);
                 comboStep = 1;
             }
             else if (comboStep == 1)
             {
+                setDame(0);
                 animCharacter.PlayAttack(comboStep);
                 photonView.RPC("PlayAttack", RpcTarget.Others, comboStep);
                 comboStep = 2;
             }
             else if (comboStep == 2)
             {
+                setDame(10f);
                 animCharacter.PlayAttack(comboStep);
                 photonView.RPC("PlayAttack", RpcTarget.Others, comboStep);
                 comboStep = 0;
@@ -76,45 +92,95 @@ public class CombatCharacter : MonoBehaviourPun
             attackCooldown = status.GetAttackCooldown();   
         }
         UseSkill();
-        if (Input.GetKeyDown(KeyCode.L))
-        {
+        // if (Input.GetKeyDown(KeyCode.L))
+        // {
             
 
 
-            animCharacter.PlayTriggerDash();
-            photonView.RPC("PlayTriggerDash", RpcTarget.Others);
-        }
+        //     animCharacter.PlayTriggerDash();
+        //     photonView.RPC("PlayTriggerDash", RpcTarget.Others);
+        // }
     }
     public void UseSkill()
     {
+        CheckPressedToUseSkill();
         if(isUsingSkill) return;
-        if(Input.GetKeyDown(KeyCode.W))
+        if(!Input.GetKeyDown(KeyCode.K)) return;
+
+        if(isWPressed)
         {
-            if (Input.GetKeyDown(KeyCode.K))
-            {
-                isUsingSkill = true;
-                animCharacter.PlaySkill(0);
-                photonView.RPC("PlaySkill", RpcTarget.Others, 0);
-            }
+            setDame(20f);
+            
+            isUsingSkill = true;
+            animCharacter.PlaySkill(0);
+            if(!PhotonNetwork.InRoom) return;
+            photonView.RPC("PlaySkill", RpcTarget.Others, 0);
+            
         }
-        else if(Input.GetKeyDown(KeyCode.S))
+        else if(isSPressed)
         {
-            if (Input.GetKeyDown(KeyCode.K))
-            {
-                isUsingSkill = true;
-                animCharacter.PlaySkill(1);
-                photonView.RPC("PlaySkill", RpcTarget.Others, 1);
-            }
+            setDame(15f);
+            
+            isUsingSkill = true;
+            animCharacter.PlaySkill(1);
+
+            if(!PhotonNetwork.InRoom) return;
+            photonView.RPC("PlaySkill", RpcTarget.Others, 1);
+            
         }
-        else if (Input.GetKeyDown(KeyCode.K))
+        else if (isADPressed)
         {
+            setDame(20f);
             isUsingSkill = true;
             animCharacter.PlaySkill(2);
+
+            if(!PhotonNetwork.InRoom) return;
             photonView.RPC("PlaySkill", RpcTarget.Others, 2);
         }
         
     }
+    public void CheckPressedToUseSkill()
+    {
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            isWPressed = true;
+            isSPressed = false;
+            isADPressed = false;
+        }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            isWPressed = false;
+            isSPressed = true;
+            isADPressed = false;
+        }
+        if(Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D))
+        {
+            isWPressed = false;
+            isSPressed = false;
+            isADPressed = true;
+        }
+    }
+    public void ResetCheckSkill() // trả về kiểu AD
+    {
+        isWPressed = false;
+        isSPressed = false;
+        isADPressed = true;
+    }
+    public void setDame(float dameSet)
+    {
+        float dameBase = status.GetAttackPower();
+        combatHitbox.damageAmount = dameBase + dameSet;
 
+    }
+    [PunRPC]
+    public void SpawnHitEFX(Vector2 hitPos)
+    {
+        if(hitEFX_Prefab != null)
+        {
+            GameObject hit = Instantiate(hitEFX_Prefab, hitPos, quaternion.identity);
+            Destroy(hit, 0.3f);
+        }
+    }
     [PunRPC]
     public void TakeDamage(int viewId,float damage)
     {
@@ -123,7 +189,7 @@ public class CombatCharacter : MonoBehaviourPun
             Debug.Log("ViewID không khớp, không nhận sát thương");
             return;
         } 
-        
+        photonView.RPC("playHitSound" , RpcTarget.All);
         photonView.RPC("PlayTrigerDamaged", RpcTarget.Others); // Đồng bộ hoạt ảnh bị thương cho các client khác
         animCharacter.PlayTrigerDamaged();
         status.TakeDamage(damage);
@@ -133,6 +199,11 @@ public class CombatCharacter : MonoBehaviourPun
         {
             Die();
         }
+    }
+    [PunRPC]
+    public void playHitSound()
+    {
+        AudioManager.instance.PlayIndexSoundEFXHit(0);
     }
     void Die()
     {

@@ -75,6 +75,8 @@ public class UIElementMover  :  MonoBehaviour, ISelectHandler, IDeselectHandler 
     }
     public void OnPointerDown(PointerEventData evenData) // khi nhấn chuột vào khu vực button sẽ chạy
     {
+        
+        AudioManager.instance.PlayIndexSoundEFX(0);
         isPressed = true;
         moveText(isPressed);
         // Debug.Log("down");

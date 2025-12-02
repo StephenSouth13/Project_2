@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using Photon.Pun;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class CombatHitbox : MonoBehaviourPun
@@ -24,7 +25,8 @@ public class CombatHitbox : MonoBehaviourPun
     [Header("system")]
     Collider2D[] overlapBuffer = new Collider2D[10]; // Bộ đệm để lưu trữ các collider phát hiện được
     private HashSet<int> alreadyHitTargets = new HashSet<int>(); // Lưu trữ các mục tiêu đã bị đánh trúng trong lần tấn công hiện tại
-    float damageAmount; // Lượng sát thương
+    public float damageAmount = 0f; // Lượng sát thương mà khi sử dụng skill truyền vào
+
     void Awake()
     {
         pv = GetComponentInParent<PhotonView>();
@@ -32,10 +34,7 @@ public class CombatHitbox : MonoBehaviourPun
     }
     void Start()
     {
-        if(combatCharacter != null)
-        {
-            damageAmount = combatCharacter.status.GetAttackPower();
-        }
+        
     }
     void Update()
     {
@@ -48,7 +47,9 @@ public class CombatHitbox : MonoBehaviourPun
     }
     public void StartAttack()
     {
+        if(!PhotonNetwork.InRoom) return;
         if (!pv.IsMine) return; // Chỉ máy sở hữu mới xử lý
+        
         if(GameEndManager.instance.IsKoTime == true)
         {
             Debug.Log("[StartAttack] đang trong thời gian KO");
@@ -61,6 +62,7 @@ public class CombatHitbox : MonoBehaviourPun
 
     public void StopAttack()
     {
+        if(!PhotonNetwork.InRoom) return;
         if (!pv.IsMine) return;
         Debug.Log("Stop Attack");
         isAttacking = false;
@@ -69,6 +71,7 @@ public class CombatHitbox : MonoBehaviourPun
     public void EndSkill()
     {
         combatCharacter.isUsingSkill = false;
+        combatCharacter.ResetCheckSkill();
     }
     public void DetectInRange()
     {
@@ -104,7 +107,10 @@ public class CombatHitbox : MonoBehaviourPun
                     continue;
                 }
                 Debug.Log("Hit " + target.name);
+
                 alreadyHitTargets.Add(targetId); // Đánh dấu mục tiêu đã bị đánh trúng
+                Vector2 hitPos = target.ClosestPoint(attackPoint.position);
+                targetPv.RPC("SpawnHitEFX", RpcTarget.All, hitPos);
                 targetPv.RPC("TakeDamage", RpcTarget.All,targetPv.ViewID, damageAmount); // Gọi RPC TakeDamage trên đối tượng bị tấn công
             }
             // else
@@ -113,6 +119,7 @@ public class CombatHitbox : MonoBehaviourPun
             // }
         }
     }
+    
     void OnDrawGizmosSelected() // Vẽ vùng tấn công trong Scene view
     {
         if (attackPoint == null) return;

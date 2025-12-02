@@ -67,6 +67,11 @@ MonoBehaviour:
   - SynceIntentAndShow
   - SynceRoomStateChange
   - SetBoolKOTime
+  - SpawnHitEFX
+  - PlayNameSoundEFX
+  - playsoundMove
+  - playsoundJump
+  - playHitSound
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

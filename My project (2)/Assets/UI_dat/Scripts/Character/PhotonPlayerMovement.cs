@@ -10,6 +10,9 @@ public class PhotonPlayerMovement : MonoBehaviourPun
     public int maxJumps = 2;          // Số lần nhảy tối đa (Nhảy Đôi)
     public bool isJump;
 
+    public float stepInterval = 0.4f; // khoảng thời gian giữa các bước
+
+    private float stepTimer;
     [Header("Ground Check")]
     public Transform groundCheck;
     public float checkRadius = 0.2f;
@@ -84,6 +87,20 @@ public class PhotonPlayerMovement : MonoBehaviourPun
         if (blockMovement) return; // Nếu bị khóa di chuyển thì không làm gì cả
         horizontalInput = Input.GetAxisRaw("Horizontal");
 
+        if(horizontalInput != 0 && isGrounded)
+        {
+            stepTimer -= Time.deltaTime;
+            if (stepTimer <= 0f)
+            {
+                photonView.RPC("playsoundMove",RpcTarget.All);
+                stepTimer = stepInterval; // reset timer
+            }
+        }
+        else
+        {
+            stepTimer = 0;
+        }
+
         Vector2 movement = new Vector2(horizontalInput * runSpeed, rb.linearVelocity.y);
         rb.linearVelocity = movement;
         bool isMoving = horizontalInput > 0.05f || horizontalInput < -0.05f;
@@ -94,7 +111,16 @@ public class PhotonPlayerMovement : MonoBehaviourPun
         animCharacter.PlayMove(isMoving); // local animation
         FlipSprite();
     }
-
+    [PunRPC]
+    public void playsoundMove()
+    {
+        AudioManager.instance.PlayIndexSoundEFXCharacterBaseOneShot(0);
+    }
+    [PunRPC]
+    public void playsoundJump()
+    {
+        AudioManager.instance.PlayIndexSoundEFXCharacterBase(1);
+    }
     private void Jump()
     {
         // Chỉ cho phép nhảy khi còn lượt nhảy
@@ -104,7 +130,7 @@ public class PhotonPlayerMovement : MonoBehaviourPun
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
 
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-
+            photonView.RPC("playsoundJump",RpcTarget.All);
             jumpsRemaining--; // Giảm số lần nhảy
 
         }

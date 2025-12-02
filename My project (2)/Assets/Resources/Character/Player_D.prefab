@@ -3437,6 +3437,7 @@ MonoBehaviour:
   jumpForce: 12
   maxJumps: 2
   isJump: 0
+  stepInterval: 0.4
   groundCheck: {fileID: 8301688226739895578}
   checkRadius: 0.2
   groundLayer:
@@ -3495,6 +3496,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a9700090c576554a80edda04c5100b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hitEFX_Prefab: {fileID: 5777971626609630126, guid: e9821933cc5839b49a94d9dc88bfff99, type: 3}
+  isWPressed: 0
+  isSPressed: 0
+  isADPressed: 1
   status:
     attackDamage: 6
     strength: 7
@@ -5126,6 +5131,7 @@ MonoBehaviour:
   targetLayers:
     serializedVersion: 2
     m_Bits: 512
+  damageAmount: 0
 --- !u!114 &369408123679162591
 MonoBehaviour:
   m_ObjectHideFlags: 0

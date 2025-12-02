@@ -4320,6 +4320,7 @@ MonoBehaviour:
   rb: {fileID: 2962203186337064005, guid: 951bf2798a52c09489ee6385532bf457, type: 3}
   animCharacter: {fileID: 4364823952909302038}
   jumpsRemaining: 0
+  blockMovement: 0
 --- !u!114 &1720584714676405102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4362,12 +4363,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a9700090c576554a80edda04c5100b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isWPressed: 0
+  isSPressed: 0
+  isADPressed: 1
   status:
     attackDamage: 8
     strength: 10
     dexterity: 2
     speed: 3
   attackSpeed: 1
+  isUsingSkill: 0
 --- !u!114 &-2911085006582463150
 MonoBehaviour:
   m_ObjectHideFlags: 0
